@@ -655,3 +655,69 @@ and the client opcode are not spelled the same.
 `JS.ignore_attributes/1` in the template.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
+
+## PubSub
+
+### Without `handle_info/2`, a message a hook passes on is dropped
+
+**What happens.** The Salalah apron LiveView defines no `handle_info/2`.
+Following runway calls attaches a `:handle_info` hook that halts on
+`{:runway_call, runway, condition}` and returns `{:cont, socket}` for
+anything else. A `{:tide_table, "Raysut", "High water 14:20"}` message
+reaches the hook, continues, and disappears. The LiveView keeps running
+and the next runway call still lands.
+
+**Why it matters.** A LiveView that defines even one `handle_info/2`
+clause crashes on a message no clause matches. Moving that work into a
+hook and deleting the callback turns the crash into a silent drop. A
+broadcast with a misspelled shape then looks like a broadcast that never
+arrived.
+
+**What to do.** Keep a catch-all clause in the hook if you need to see
+strays, or define `handle_info/2` with an explicit fallback. Do not rely
+on a crash to report an unexpected broadcast.
+
+**Seen in:** [Salalah monsoon call](features/15-pubsub/06-salalah-monsoon-call/).
+
+### `direct_broadcast/4` to your own node arrives after the call returns
+
+**What happens.** With the PG2 adapter, `direct_broadcast/4` sends the
+message to the adapter worker registered as
+`PhoenixMultivitamin.PubSub.Adapter`, which then dispatches it locally.
+With that worker suspended, `direct_broadcast(node(), ...)` returns `:ok`
+and nothing has been delivered, while `local_broadcast/3` in the same test
+has already delivered. The held message arrives once the worker resumes.
+A direct broadcast to `:"riyadh-acc@hijaz"`, a node that is not
+connected, also returns `:ok` and delivers nothing.
+
+**Why it matters.** `local_broadcast/3` and `broadcast/3` deliver to local
+subscribers before they return. A test that asserts right after a
+`direct_broadcast/4` can pass or fail by timing. An `:ok` from a direct
+broadcast does not mean the node exists.
+
+**What to do.** Use `local_broadcast/3` for this node. In tests of a
+direct broadcast, `assert_receive` or call `:sys.get_state/1` on the
+adapter worker before asserting. Check `Node.list/0` if delivery to a
+named node matters.
+
+**Seen in:** [Madinah Hijaz hold wire](features/15-pubsub/11-madinah-hijaz-hold-wire/).
+
+### `Endpoint.broadcast/3` needs a string event and does not encode the payload
+
+**What happens.** `Endpoint.broadcast!(topic, "ring", %{gate: "C12",
+rung_by: "Maryam"})` reaches a LiveView subscriber as
+`%Phoenix.Socket.Broadcast{topic: topic, event: "ring", payload: %{gate:
+"C12", rung_by: "Maryam"}}`. The payload's atom keys stay atoms.
+`Endpoint.broadcast!(topic, :ring, payload)` raises `FunctionClauseError`
+before anything is broadcast.
+
+**Why it matters.** Code that listens to both channels and LiveViews can
+expect JSON-shaped string keys. A LiveView receives the Elixir term it
+was given. Only the typespec says the event is a string; at runtime an
+atom event fails with an error that does not mention the event.
+
+**What to do.** Pass the event as a string, and match the payload with
+the keys the publisher used. Use `Phoenix.PubSub.broadcast/3` with your
+own message shape when no channel needs the `Broadcast` struct.
+
+**Seen in:** [Doha Pearl floor bell](features/15-pubsub/07-doha-pearl-floor-bell/).
