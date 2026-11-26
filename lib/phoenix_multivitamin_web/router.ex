@@ -355,6 +355,26 @@ defmodule PhoenixMultivitaminWeb.Router do
     get "/jigs/:jig_id", PhoenixMultivitaminWeb.FinkenwerderJigFloorController, :show
   end
 
+  # Feature 25 — Testing. Path slugs live here; domain copy lives in each
+  # scenario folder.
+  scope "/features/25-testing" do
+    pipe_through :browser
+
+    get "/01-port-moresby-atis-desk/atis",
+        PhoenixMultivitaminWeb.PortMoresbyAtisDeskController,
+        :show
+
+    live "/04-broome-sector-hop/hold", PhoenixMultivitaminWeb.BroomeHoldLive
+  end
+
+  scope "/features/25-testing" do
+    pipe_through :api
+
+    get "/01-port-moresby-atis-desk/atis/export",
+        PhoenixMultivitaminWeb.PortMoresbyAtisDeskController,
+        :export
+  end
+
   scope "/", PhoenixMultivitaminWeb do
     pipe_through :browser
 
