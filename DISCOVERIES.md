@@ -655,3 +655,39 @@ and the client opcode are not spelled the same.
 `JS.ignore_attributes/1` in the template.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
+
+## Ecto queries and contexts
+
+### `Repo.stream/2` returns a stream; the raise waits until you reduce it
+
+**What happens.** Outside a transaction, `Repo.stream/2` still returns a
+`%Stream{}`. The error does not fire at the call site. Reducing that
+stream with `Enum.reduce/3` raises `RuntimeError` with
+`"cannot reduce stream outside of transaction"`. The wording is
+"cannot reduce stream", not "cannot be invoked".
+
+**Why it matters.** A context that "opens" a stream and hands it to the
+caller looks fine in the debugger. The crash lands later, in whoever
+consumes the stream, and a regex written from the guides' "must be run
+inside a transaction" phrase will miss the real message.
+
+**What to do.** Wrap the stream and its consumption in
+`Repo.transaction/2`. Assert on `"cannot reduce stream outside of
+transaction"` when testing the failure path.
+
+**Seen in:** [Buenos Aires ledger stream](features/19-ecto-queries-and-contexts/12-buenos-aires-ledger-stream/).
+
+### `Repo.aggregate(:count)` on an empty filtered query returns `0`, not `nil`
+
+**What happens.** `where(occupied == true) |> Repo.aggregate(:count)` on
+an empty apron returns `0`. The LiveView can assign that integer
+directly. `:avg` on an empty set is the one that returns `nil`.
+
+**Why it matters.** Treating a missing aggregate as "no value" and
+writing `count || 0` is harmless for `:count` and wrong for `:avg`.
+The empty and zero cases look the same for counts.
+
+**What to do.** For `:count`, assert `0` on an empty table. For `:avg`,
+handle `nil` separately.
+
+**Seen in:** [Auckland apron count](features/19-ecto-queries-and-contexts/11-auckland-apron-count/).
