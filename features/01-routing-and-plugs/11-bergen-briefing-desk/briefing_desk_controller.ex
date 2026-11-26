@@ -9,8 +9,11 @@ defmodule PhoenixMultivitaminWeb.BergenBriefingDeskController do
   @moduledoc false
   use PhoenixMultivitaminWeb, :controller
 
+  # region: guard-plugs
+  # focus: plug :require_dispatcher when action == :desk
   plug :require_dispatcher when action == :desk
   plug :leaky_dispatcher when action == :leaky_desk
+  # endregion: guard-plugs
 
   def roster(conn, _params) do
     conn
@@ -28,6 +31,8 @@ defmodule PhoenixMultivitaminWeb.BergenBriefingDeskController do
     render_desk(conn)
   end
 
+  # region: render-desk
+  # focus: assign(:plates_opened, true)
   defp render_desk(conn) do
     conn
     |> assign(:page_title, "Bergen briefing desk")
@@ -39,16 +44,26 @@ defmodule PhoenixMultivitaminWeb.BergenBriefingDeskController do
     |> render(:desk)
   end
 
+  # endregion: render-desk
+
   defp require_dispatcher(conn, _opts) do
+    # region: read-session
+    # focus: get_session(conn, :briefing_dispatcher)
     case get_session(conn, :briefing_dispatcher) do
       name when is_binary(name) ->
         assign(conn, :dispatcher, name)
 
+      # endregion: read-session
+
+      # region: redirect-halt
+      # focus: halt()
       _ ->
         conn
         |> put_flash(:error, "Sign the roster before you open the briefing desk.")
         |> redirect(to: ~p"/features/01-routing-and-plugs/11-bergen-briefing-desk/roster")
         |> halt()
+
+        # endregion: redirect-halt
     end
   end
 
@@ -57,10 +72,14 @@ defmodule PhoenixMultivitaminWeb.BergenBriefingDeskController do
       name when is_binary(name) ->
         assign(conn, :dispatcher, name)
 
+      # region: leaky-redirect
+      # focus: redirect(to:
       _ ->
         conn
         |> put_flash(:error, "Sign the roster before you open the briefing desk.")
         |> redirect(to: ~p"/features/01-routing-and-plugs/11-bergen-briefing-desk/roster")
+
+        # endregion: leaky-redirect
     end
   end
 end

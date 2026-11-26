@@ -9,15 +9,23 @@ defmodule PhoenixMultivitaminWeb.ShannonAvgasController do
   @moduledoc false
   use PhoenixMultivitaminWeb, :controller
 
+  # region: plug-with-opts
+  # focus: plug PhoenixMultivitaminWeb.ShannonAvgasPlug
   plug PhoenixMultivitaminWeb.ShannonAvgasPlug,
     apron: "Shannon",
     grade: "100LL",
     bowser: "Avgas 1"
 
+  # endregion: plug-with-opts
+
+  # region: render-office
+  # focus: render(:show)
   def show(conn, _params) do
     conn
     |> assign(:page_title, "Shannon avgas office")
     |> assign(:flash, conn.assigns[:flash] || %{})
     |> render(:show)
   end
+
+  # endregion: render-office
 end

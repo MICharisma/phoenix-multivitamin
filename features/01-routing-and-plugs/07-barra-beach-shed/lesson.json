@@ -1,0 +1,76 @@
+{
+  "title": "Barra beach shed",
+  "source": "beach_shed_controller.ex",
+  "steps": [
+    {
+      "label": "Stack three function plugs in order",
+      "api": "Plug.Builder.plug/2",
+      "regions": [
+        {
+          "name": "declare-plugs",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Stamp the beach and the marshal",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "stamp-beach",
+          "role": "primary"
+        },
+        {
+          "name": "declare-plugs",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Admit a walk-on with a beach pass",
+      "api": "Plug.Conn.get_req_header/2",
+      "regions": [
+        {
+          "name": "admit-walk-on",
+          "role": "primary"
+        },
+        {
+          "name": "stamp-beach",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Deny and halt without a pass",
+      "api": "Plug.Conn.halt/1",
+      "regions": [
+        {
+          "name": "deny-and-halt",
+          "role": "primary"
+        },
+        {
+          "name": "admit-walk-on",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Only a passed conn reaches the turnstile and show/2",
+      "api": "Plug.Builder.plug/2",
+      "regions": [
+        {
+          "name": "stamp-turnstile",
+          "role": "primary"
+        },
+        {
+          "name": "deny-and-halt",
+          "role": "setup"
+        },
+        {
+          "name": "show-action",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

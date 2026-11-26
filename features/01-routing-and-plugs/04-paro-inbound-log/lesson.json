@@ -1,0 +1,58 @@
+{
+  "title": "Paro inbound log",
+  "source": "inbound_log_router.ex",
+  "steps": [
+    {
+      "label": "Declare a pipeline inside the forwarded router",
+      "api": "Phoenix.Router.pipeline/2",
+      "regions": [
+        {
+          "name": "inner-pipeline",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Draw routes relative to the forward point",
+      "api": "Phoenix.Router.get/4",
+      "regions": [
+        {
+          "name": "inner-routes",
+          "role": "primary"
+        },
+        {
+          "name": "inner-pipeline",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Read script_name and path_info after the forward",
+      "api": "Plug.Conn.script_name",
+      "regions": [
+        {
+          "name": "inbound_plug.ex#split-path",
+          "role": "primary"
+        },
+        {
+          "name": "inner-pipeline",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Take the Drukair registration from the inner path",
+      "api": "Phoenix.Router.get/4",
+      "regions": [
+        {
+          "name": "inbound_log_controller.ex#read-reg",
+          "role": "primary"
+        },
+        {
+          "name": "inner-routes",
+          "role": "setup"
+        }
+      ]
+    }
+  ]
+}

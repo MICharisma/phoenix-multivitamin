@@ -23,6 +23,8 @@ defmodule PhoenixMultivitaminWeb.IncheonDeclarationsController do
     }
   }
 
+  # region: list-lane
+  # focus: declarations_for(conn.assigns.lane)
   def index(conn, _params) do
     declarations = declarations_for(conn.assigns.lane)
 
@@ -33,18 +35,28 @@ defmodule PhoenixMultivitaminWeb.IncheonDeclarationsController do
     |> render(:index)
   end
 
+  # endregion: list-lane
+
+  # region: match-id
+  # focus: %{"id" => id}
   def show(conn, %{"id" => id}) do
     declaration = Map.fetch!(declarations_for(conn.assigns.lane), id)
+    # endregion: match-id
 
     conn
     |> assign(:page_title, "Incheon bonded shed")
     |> assign(:flash, conn.assigns[:flash] || %{})
+    # region: string-id
+    # focus: is_binary(id)
     |> assign(:declaration_id, id)
     |> assign(:declaration_id_is_binary, is_binary(id))
+    # endregion: string-id
     |> assign(:declaration, declaration)
     |> render(:show)
   end
 
+  # region: pick-lane
   defp declarations_for(:arrivals), do: @arrivals
   defp declarations_for(:departures), do: @departures
+  # endregion: pick-lane
 end

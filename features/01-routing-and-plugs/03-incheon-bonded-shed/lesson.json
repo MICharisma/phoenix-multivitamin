@@ -1,0 +1,62 @@
+{
+  "title": "Incheon bonded shed",
+  "source": "declarations_controller.ex",
+  "steps": [
+    {
+      "label": "Read the lane from the plug options",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "inspector_plug.ex#read-lane",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "List the declarations for the lane the scope chose",
+      "api": "Phoenix.Router.resources/4",
+      "regions": [
+        {
+          "name": "list-lane",
+          "role": "primary"
+        },
+        {
+          "name": "pick-lane",
+          "role": "setup"
+        },
+        {
+          "name": "inspector_plug.ex#read-lane",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Match the declaration id from the path",
+      "api": "Phoenix.Router.resources/4",
+      "regions": [
+        {
+          "name": "match-id",
+          "role": "primary"
+        },
+        {
+          "name": "pick-lane",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Show that the id arrived as a string",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "string-id",
+          "role": "primary"
+        },
+        {
+          "name": "match-id",
+          "role": "setup"
+        }
+      ]
+    }
+  ]
+}

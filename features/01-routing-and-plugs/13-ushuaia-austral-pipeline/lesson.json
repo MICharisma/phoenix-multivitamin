@@ -1,0 +1,66 @@
+{
+  "title": "Ushuaia austral pipeline",
+  "source": "lookout_router.ex",
+  "steps": [
+    {
+      "label": "The austral plug runs before the forward",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "austral_plug.ex#stamp-austral",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "The forwarded router declares its own pipeline",
+      "api": "Phoenix.Router.pipeline/2",
+      "regions": [
+        {
+          "name": "lookout-pipeline",
+          "role": "primary"
+        },
+        {
+          "name": "lookout-routes",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "No lookout ticket halts inside the inner router",
+      "api": "Plug.Conn.halt/1",
+      "regions": [
+        {
+          "name": "lookout_plug.ex#deny-halt",
+          "role": "primary"
+        },
+        {
+          "name": "lookout_plug.ex#check-ticket",
+          "role": "setup"
+        },
+        {
+          "name": "lookout-pipeline",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Nest resources under a clerk scope",
+      "api": "Phoenix.Router.resources/4",
+      "regions": [
+        {
+          "name": "nested-resources",
+          "role": "primary"
+        },
+        {
+          "name": "lookout-routes",
+          "role": "setup"
+        },
+        {
+          "name": "watch_controller.ex#watch-params",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

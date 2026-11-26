@@ -1,0 +1,48 @@
+{
+  "title": "Kiruna de-ice pad",
+  "source": "deice_pad_controller.ex",
+  "steps": [
+    {
+      "label": "Plug the de-ice module with two pads",
+      "api": "Plug.Builder.plug/2",
+      "regions": [
+        {
+          "name": "plug-pads",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Build the options map and stamp when init/1 ran",
+      "api": "Plug.init/1",
+      "regions": [
+        {
+          "name": "deice_plug.ex#init-map",
+          "role": "primary"
+        },
+        {
+          "name": "plug-pads",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Stamp when call/2 ran and render the pad",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "deice_plug.ex#call-stamp",
+          "role": "primary"
+        },
+        {
+          "name": "deice_plug.ex#init-map",
+          "role": "setup"
+        },
+        {
+          "name": "render-pad",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

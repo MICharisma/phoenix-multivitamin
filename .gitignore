@@ -46,3 +46,4 @@ npm-debug.log
 
 # Private files retained by upload scenarios
 /priv/uploads/
+/artifacts/

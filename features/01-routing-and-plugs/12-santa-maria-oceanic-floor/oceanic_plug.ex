@@ -5,9 +5,13 @@ defmodule PhoenixMultivitaminWeb.SantaMariaOceanicPlug do
   def init(opts), do: opts
 
   def call(conn, _opts) do
+    # region: stamp-oceanic
+    # focus: assign(:fir, "Santa Maria Oceanic")
     conn
     |> assign(:fir, "Santa Maria Oceanic")
     |> stamp_trace("oceanic")
+
+    # endregion: stamp-oceanic
   end
 
   def stamp_trace(conn, step) do

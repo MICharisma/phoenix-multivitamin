@@ -12,15 +12,21 @@ defmodule PhoenixMultivitaminWeb.ChangiHydrantTapeLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    # region: check-socket
+    # focus: Map.has_key?(socket.assigns, :shift)
     socket_had_shift? = Map.has_key?(socket.assigns, :shift)
+    # endregion: check-socket
 
     {:ok,
      socket
      |> assign(:page_title, "Changi hydrant tape")
      |> assign(:operator, "Siti")
      |> assign(:socket_had_shift?, socket_had_shift?)
+     # region: copy-assigns
+     # focus: assign_new(:shift, fn -> "no shift from the plug" end)
      |> assign_new(:shift, fn -> "no shift from the plug" end)
      |> assign_new(:hydrant, fn -> "no hydrant from the plug" end)
+     # endregion: copy-assigns
      |> assign_new(:apron, fn -> "no apron from the plug" end)}
   end
 
@@ -54,7 +60,10 @@ defmodule PhoenixMultivitaminWeb.ChangiHydrantTapeLive do
         <dt>Hydrant</dt>
         <dd id="hydrant-name">{@hydrant}</dd>
         <dt>Shift</dt>
+        <%!-- region: show-shift --%>
+        <%!-- focus: {@shift} --%>
         <dd id="shift-name">{@shift}</dd>
+        <%!-- endregion: show-shift --%>
         <dt>Socket had shift</dt>
         <dd id="socket-had-shift">{if @socket_had_shift?, do: "yes", else: "no"}</dd>
       </dl>

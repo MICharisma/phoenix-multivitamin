@@ -1,0 +1,62 @@
+{
+  "title": "Changi hydrant tape",
+  "source": "hydrant_tape_live.ex",
+  "steps": [
+    {
+      "label": "Pick the shift in the router pipeline plug",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "hydrant_plug.ex#pick-shift",
+          "role": "primary"
+        },
+        {
+          "name": "hydrant_plug.ex#assign-shift",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "The controller tape reads the assigns straight off the conn",
+      "api": "Phoenix.Controller.render/2",
+      "regions": [
+        {
+          "name": "hydrant_tape_controller.ex#render-tape",
+          "role": "primary"
+        },
+        {
+          "name": "hydrant_plug.ex#assign-shift",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Check whether the socket already holds the shift",
+      "api": "Phoenix.Component.assign_new/3",
+      "regions": [
+        {
+          "name": "check-socket",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Copy the conn assigns onto the socket with assign_new/3",
+      "api": "Phoenix.Component.assign_new/3",
+      "regions": [
+        {
+          "name": "copy-assigns",
+          "role": "primary"
+        },
+        {
+          "name": "check-socket",
+          "role": "setup"
+        },
+        {
+          "name": "show-shift",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

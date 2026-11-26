@@ -1,0 +1,31 @@
+{
+  "feature": "routing-and-plugs",
+  "title": "Routing and plugs",
+  "covers": [
+    "Phoenix.Component.assign_new/3",
+    "Phoenix.Controller.get_format/1",
+    "Phoenix.Controller.json/2",
+    "Phoenix.Controller.put_flash/3",
+    "Phoenix.Controller.put_view/2",
+    "Phoenix.Controller.redirect/2",
+    "Phoenix.Controller.render/2",
+    "Phoenix.Router.forward/4",
+    "Phoenix.Router.get/4",
+    "Phoenix.Router.pipe_through/1",
+    "Phoenix.Router.pipeline/2",
+    "Phoenix.Router.plug/2",
+    "Phoenix.Router.resources/4",
+    "Phoenix.Router.scope/2",
+    "Plug.Builder.plug/2",
+    "Plug.Conn.assign/3",
+    "Plug.Conn.get_req_header/2",
+    "Plug.Conn.get_session/2",
+    "Plug.Conn.halt/1",
+    "Plug.Conn.path_info",
+    "Plug.Conn.put_private/3",
+    "Plug.Conn.put_status/2",
+    "Plug.Conn.script_name",
+    "Plug.call/2",
+    "Plug.init/1"
+  ]
+}

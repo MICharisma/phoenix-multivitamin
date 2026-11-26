@@ -1,0 +1,72 @@
+{
+  "title": "Lukla shear gate",
+  "source": "shear_gate_controller.ex",
+  "steps": [
+    {
+      "label": "Name the Khumbu approach in the router pipeline plug",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "shear_gate_plug.ex#name-approach",
+          "role": "primary"
+        },
+        {
+          "name": "shear_gate_plug.ex#stamp-trace",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Declare two function plugs on the controller",
+      "api": "Plug.Builder.plug/2",
+      "regions": [
+        {
+          "name": "declare-plugs",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Stamp the westerly rotor off Nupla",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "stamp-shear-window",
+          "role": "primary"
+        },
+        {
+          "name": "declare-plugs",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Stamp the HTTP method",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "stamp-request-meta",
+          "role": "primary"
+        },
+        {
+          "name": "declare-plugs",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Render the inbound board after every plug has run",
+      "api": "Phoenix.Controller.render/2",
+      "regions": [
+        {
+          "name": "render-board",
+          "role": "primary"
+        },
+        {
+          "name": "shear_gate_html.ex#plug-order",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

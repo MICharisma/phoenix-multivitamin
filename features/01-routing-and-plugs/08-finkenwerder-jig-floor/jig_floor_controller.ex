@@ -15,6 +15,8 @@ defmodule PhoenixMultivitaminWeb.FinkenwerderJigFloorController do
     "door-3" => %{station: "door jig 3", join: "pax door C", minutes: 60}
   }
 
+  # region: list-jigs
+  # focus: respond(conn, :index, %{jigs: jigs, jig: nil})
   def index(conn, _params) do
     jigs =
       @jigs
@@ -24,16 +26,28 @@ defmodule PhoenixMultivitaminWeb.FinkenwerderJigFloorController do
     respond(conn, :index, %{jigs: jigs, jig: nil})
   end
 
+  # endregion: list-jigs
+
+  # region: show-jig
+  # focus: %{"jig_id" => jig_id}
   def show(conn, %{"jig_id" => jig_id}) do
     jig = Map.put(@jigs[jig_id], :id, jig_id)
     respond(conn, :show, %{jigs: [], jig: jig})
   end
 
+  # endregion: show-jig
+
   defp respond(conn, template, assigns) do
+    # region: pick-format
+    # focus: get_format(conn)
     case get_format(conn) do
       "json" ->
         json(conn, json_payload(template, assigns))
 
+      # endregion: pick-format
+
+      # region: render-html
+      # focus: render(template)
       _ ->
         conn
         |> assign(:page_title, "Finkenwerder jig floor")
@@ -43,9 +57,12 @@ defmodule PhoenixMultivitaminWeb.FinkenwerderJigFloorController do
         |> assign(:jigs, assigns.jigs)
         |> assign(:jig, assigns.jig)
         |> render(template)
+
+        # endregion: render-html
     end
   end
 
+  # region: json-payload
   defp json_payload(:index, %{jigs: jigs}) do
     %{
       plant: "Airbus Finkenwerder",
@@ -56,6 +73,8 @@ defmodule PhoenixMultivitaminWeb.FinkenwerderJigFloorController do
   defp json_payload(:show, %{jig: jig}) do
     %{plant: "Airbus Finkenwerder", jig: jig_payload(jig)}
   end
+
+  # endregion: json-payload
 
   defp jig_payload(jig) do
     %{id: jig.id, station: jig.station, join: jig.join, minutes: jig.minutes}

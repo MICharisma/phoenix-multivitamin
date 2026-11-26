@@ -1,0 +1,10 @@
+{
+  "name": "phoenix",
+  "title": "Phoenix multivitamin",
+  "language": "elixir",
+  "grammar": "elixir",
+  "repo": "MICharisma/phoenix-multivitamin",
+  "features": [
+    "01-routing-and-plugs"
+  ]
+}

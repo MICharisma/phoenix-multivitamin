@@ -1,0 +1,58 @@
+{
+  "title": "Santa Maria oceanic floor",
+  "source": "watch_floor_controller.ex",
+  "steps": [
+    {
+      "label": "The outer scope pipeline stamps the oceanic FIR",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "oceanic_plug.ex#stamp-oceanic",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "A nested pipe_through adds the watch plug",
+      "api": "Phoenix.Router.pipe_through/1",
+      "regions": [
+        {
+          "name": "watch_plug.ex#stamp-watch",
+          "role": "primary"
+        },
+        {
+          "name": "oceanic_plug.ex#stamp-oceanic",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Nested scope params arrive together as strings",
+      "api": "Phoenix.Router.scope/2",
+      "regions": [
+        {
+          "name": "scope-params",
+          "role": "primary"
+        },
+        {
+          "name": "string-params",
+          "role": "result"
+        }
+      ]
+    },
+    {
+      "label": "The relief scope never ran the oceanic plug",
+      "api": "Phoenix.Router.pipe_through/1",
+      "regions": [
+        {
+          "name": "relief-fir",
+          "role": "primary"
+        },
+        {
+          "name": "watch_plug.ex#stamp-watch",
+          "role": "setup"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "title": "Finkenwerder jig floor",
+  "source": "jig_floor_controller.ex",
+  "steps": [
+    {
+      "label": "Read the negotiated format",
+      "api": "Phoenix.Controller.get_format/1",
+      "regions": [
+        {
+          "name": "pick-format",
+          "role": "primary"
+        },
+        {
+          "name": "list-jigs",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Answer JSON from the same action",
+      "api": "Phoenix.Controller.json/2",
+      "regions": [
+        {
+          "name": "json-payload",
+          "role": "primary"
+        },
+        {
+          "name": "pick-format",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Render the HTML ledger for browsers",
+      "api": "Phoenix.Controller.render/2",
+      "regions": [
+        {
+          "name": "render-html",
+          "role": "primary"
+        },
+        {
+          "name": "pick-format",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Show one jig by its path param",
+      "api": "Phoenix.Router.get/4",
+      "regions": [
+        {
+          "name": "show-jig",
+          "role": "primary"
+        },
+        {
+          "name": "pick-format",
+          "role": "setup"
+        }
+      ]
+    }
+  ]
+}

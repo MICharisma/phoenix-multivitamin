@@ -6,13 +6,22 @@ defmodule PhoenixMultivitaminWeb.TromsoSarHoistPlug do
   def init(opts), do: opts
 
   def call(conn, _opts) do
+    # region: read-ticket
+    # focus: get_req_header(conn, "x-winch-ticket")
     case get_req_header(conn, "x-winch-ticket") do
+      # endregion: read-ticket
+      # region: assign-crew
+      # focus: assign(:winch_operator, "Sigrid")
       ["hoist-17"] ->
         conn
         |> assign(:pad, "Tromsø SAR pad")
         |> assign(:hoist, "Sea King winch 17")
         |> assign(:winch_operator, "Sigrid")
 
+      # endregion: assign-crew
+
+      # region: lock-pad
+      # focus: put_status(:unauthorized)
       _ ->
         conn
         |> assign(:page_title, "Tromsø SAR hoist")
@@ -21,7 +30,12 @@ defmodule PhoenixMultivitaminWeb.TromsoSarHoistPlug do
         |> put_status(:unauthorized)
         |> put_view(html: PhoenixMultivitaminWeb.TromsoSarHoistHTML)
         |> render(:locked)
+        # endregion: lock-pad
+        # region: halt-pad
+        # focus: halt()
         |> halt()
+
+        # endregion: halt-pad
     end
   end
 end

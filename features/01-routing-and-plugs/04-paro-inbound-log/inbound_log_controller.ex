@@ -13,9 +13,13 @@ defmodule PhoenixMultivitaminWeb.ParoInboundLogController do
     render_log(conn, %{reg: nil, craft: "Paro inbound A319"})
   end
 
+  # region: read-reg
+  # focus: %{"reg" => reg}
   def a319(conn, %{"reg" => reg}) do
     render_log(conn, %{reg: reg, craft: craft_name(reg)})
   end
+
+  # endregion: read-reg
 
   defp render_log(conn, extra) do
     conn

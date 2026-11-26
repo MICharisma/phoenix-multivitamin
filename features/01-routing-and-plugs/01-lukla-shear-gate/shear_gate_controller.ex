@@ -11,9 +11,14 @@ defmodule PhoenixMultivitaminWeb.LuklaShearGateController do
 
   alias PhoenixMultivitaminWeb.LuklaShearPlug
 
+  # region: declare-plugs
+  # focus: plug :stamp_shear_window
   plug :stamp_shear_window
   plug :stamp_request_meta
+  # endregion: declare-plugs
 
+  # region: render-board
+  # focus: render(:show)
   def show(conn, _params) do
     conn
     |> assign(:page_title, "Lukla shear gate")
@@ -21,6 +26,10 @@ defmodule PhoenixMultivitaminWeb.LuklaShearGateController do
     |> render(:show)
   end
 
+  # endregion: render-board
+
+  # region: stamp-shear-window
+  # focus: assign(:shear_window, "westerly rotor off Nupla")
   defp stamp_shear_window(conn, _opts) do
     conn
     |> assign(:shear_window, "westerly rotor off Nupla")
@@ -28,9 +37,15 @@ defmodule PhoenixMultivitaminWeb.LuklaShearGateController do
     |> LuklaShearPlug.stamp_trace("shear-window")
   end
 
+  # endregion: stamp-shear-window
+
+  # region: stamp-request-meta
+  # focus: assign(:request_method, conn.method)
   defp stamp_request_meta(conn, _opts) do
     conn
     |> assign(:request_method, conn.method)
     |> LuklaShearPlug.stamp_trace("request-meta")
   end
+
+  # endregion: stamp-request-meta
 end

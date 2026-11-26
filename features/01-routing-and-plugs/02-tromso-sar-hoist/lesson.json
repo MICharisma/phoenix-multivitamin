@@ -1,0 +1,62 @@
+{
+  "title": "Tromsø SAR hoist",
+  "source": "hoist_plug.ex",
+  "steps": [
+    {
+      "label": "Read the winch ticket header",
+      "api": "Plug.Conn.get_req_header/2",
+      "regions": [
+        {
+          "name": "read-ticket",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Assign the pad, the Sea King winch and Sigrid",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "assign-crew",
+          "role": "primary"
+        },
+        {
+          "name": "read-ticket",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Render the locked pad with a 401",
+      "api": "Plug.Conn.put_status/2",
+      "regions": [
+        {
+          "name": "lock-pad",
+          "role": "primary"
+        },
+        {
+          "name": "read-ticket",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Halt so dispatch/2 never runs",
+      "api": "Plug.Conn.halt/1",
+      "regions": [
+        {
+          "name": "halt-pad",
+          "role": "primary"
+        },
+        {
+          "name": "lock-pad",
+          "role": "setup"
+        },
+        {
+          "name": "hoist_controller.ex#dispatch-craft",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

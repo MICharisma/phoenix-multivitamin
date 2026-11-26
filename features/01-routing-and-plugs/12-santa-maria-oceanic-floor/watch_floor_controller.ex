@@ -10,14 +10,20 @@ defmodule PhoenixMultivitaminWeb.SantaMariaOceanicFloorController do
   @moduledoc false
   use PhoenixMultivitaminWeb, :controller
 
+  # region: scope-params
+  # focus: %{"station" => station, "watch" => watch}
   def show(conn, %{"station" => station, "watch" => watch}) do
+    # endregion: scope-params
     conn
     |> assign(:page_title, "Santa Maria oceanic floor")
     |> assign(:flash, conn.assigns[:flash] || %{})
+    # region: string-params
+    # focus: is_binary(station)
     |> assign(:station, station)
     |> assign(:watch, watch)
     |> assign(:station_is_binary, is_binary(station))
     |> assign(:watch_is_binary, is_binary(watch))
+    # endregion: string-params
     |> assign(:operator, operator_for(station))
     |> assign(:board, "nested")
     |> render(:show)
@@ -32,7 +38,10 @@ defmodule PhoenixMultivitaminWeb.SantaMariaOceanicFloorController do
     |> assign(:station_is_binary, true)
     |> assign(:watch_is_binary, true)
     |> assign(:operator, "spare radio")
+    # region: relief-fir
+    # focus: conn.assigns[:fir] || "not on this scope"
     |> assign(:fir, conn.assigns[:fir] || "not on this scope")
+    # endregion: relief-fir
     |> assign(:board, "relief")
     |> render(:show)
   end

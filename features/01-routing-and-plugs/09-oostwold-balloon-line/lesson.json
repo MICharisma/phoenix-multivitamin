@@ -1,0 +1,58 @@
+{
+  "title": "Oostwold balloon line",
+  "source": "balloon_line_controller.ex",
+  "steps": [
+    {
+      "label": "Assign the field, the balloon and Bram",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "balloon_plug.ex#assign-crew",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Keep the launch code and radio net private",
+      "api": "Plug.Conn.put_private/3",
+      "regions": [
+        {
+          "name": "balloon_plug.ex#put-private",
+          "role": "primary"
+        },
+        {
+          "name": "balloon_plug.ex#assign-crew",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "List the private keys in the action",
+      "api": "Plug.Conn.put_private/3",
+      "regions": [
+        {
+          "name": "list-private",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Copy private fields into assigns for the board",
+      "api": "Plug.Conn.assign/3",
+      "regions": [
+        {
+          "name": "copy-private",
+          "role": "primary"
+        },
+        {
+          "name": "list-private",
+          "role": "setup"
+        },
+        {
+          "name": "missing-assign",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

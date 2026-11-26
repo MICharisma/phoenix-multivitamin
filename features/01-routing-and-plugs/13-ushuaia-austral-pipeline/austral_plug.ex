@@ -5,10 +5,14 @@ defmodule PhoenixMultivitaminWeb.UshuaiaAustralPlug do
   def init(opts), do: opts
 
   def call(conn, _opts) do
+    # region: stamp-austral
+    # focus: stamp_trace("austral")
     conn
     |> assign(:austral, "Ushuaia austral")
     |> assign(:nation, "Tierra del Fuego")
     |> stamp_trace("austral")
+
+    # endregion: stamp-austral
   end
 
   def stamp_trace(conn, step) do

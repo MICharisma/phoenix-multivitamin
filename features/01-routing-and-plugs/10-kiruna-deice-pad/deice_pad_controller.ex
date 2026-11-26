@@ -9,8 +9,13 @@ defmodule PhoenixMultivitaminWeb.KirunaDeicePadController do
   @moduledoc false
   use PhoenixMultivitaminWeb, :controller
 
+  # region: plug-pads
+  # focus: pads: 2
   plug PhoenixMultivitaminWeb.KirunaDeicePlug, pads: 2
+  # endregion: plug-pads
 
+  # region: render-pad
+  # focus: render(:show)
   def show(conn, _params) do
     conn
     |> assign(:page_title, "Kiruna de-ice pad")
@@ -18,4 +23,6 @@ defmodule PhoenixMultivitaminWeb.KirunaDeicePadController do
     |> assign(:apron, "Kiruna iron-ore apron")
     |> render(:show)
   end
+
+  # endregion: render-pad
 end

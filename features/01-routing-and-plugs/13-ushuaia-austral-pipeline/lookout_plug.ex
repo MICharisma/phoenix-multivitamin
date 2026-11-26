@@ -14,10 +14,16 @@ defmodule PhoenixMultivitaminWeb.UshuaiaLookoutPlug do
       |> put_private(:radio_channel, "austral-radio")
       |> UshuaiaAustralPlug.stamp_trace("lookout")
 
+    # region: check-ticket
+    # focus: get_req_header(conn, "x-lookout-ticket")
     case get_req_header(conn, "x-lookout-ticket") do
       ["austral-clear"] ->
         assign(conn, :ticket, "austral-clear")
 
+      # endregion: check-ticket
+
+      # region: deny-halt
+      # focus: halt()
       _ ->
         conn
         |> assign(:page_title, "Ushuaia austral pipeline")
@@ -26,6 +32,8 @@ defmodule PhoenixMultivitaminWeb.UshuaiaLookoutPlug do
         |> put_view(html: PhoenixMultivitaminWeb.UshuaiaLookoutHTML)
         |> render(:denied)
         |> halt()
+
+        # endregion: deny-halt
     end
   end
 end

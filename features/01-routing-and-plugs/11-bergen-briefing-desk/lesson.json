@@ -1,0 +1,58 @@
+{
+  "title": "Bergen briefing desk",
+  "source": "briefing_desk_controller.ex",
+  "steps": [
+    {
+      "label": "Guard two actions with their own plugs",
+      "api": "Plug.Builder.plug/2",
+      "regions": [
+        {
+          "name": "guard-plugs",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Read the dispatcher from the session",
+      "api": "Plug.Conn.get_session/2",
+      "regions": [
+        {
+          "name": "read-session",
+          "role": "primary"
+        },
+        {
+          "name": "guard-plugs",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Redirect to the roster and halt",
+      "api": "Plug.Conn.halt/1",
+      "regions": [
+        {
+          "name": "redirect-halt",
+          "role": "primary"
+        },
+        {
+          "name": "read-session",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Redirect without halt and the plates still open",
+      "api": "Phoenix.Controller.redirect/2",
+      "regions": [
+        {
+          "name": "leaky-redirect",
+          "role": "primary"
+        },
+        {
+          "name": "render-desk",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

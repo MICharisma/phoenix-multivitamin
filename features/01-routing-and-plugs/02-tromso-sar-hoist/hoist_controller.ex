@@ -9,6 +9,8 @@ defmodule PhoenixMultivitaminWeb.TromsoSarHoistController do
   @moduledoc false
   use PhoenixMultivitaminWeb, :controller
 
+  # region: dispatch-craft
+  # focus: render(:dispatch)
   def dispatch(conn, _params) do
     conn
     |> assign(:page_title, "Tromsø SAR hoist")
@@ -16,4 +18,6 @@ defmodule PhoenixMultivitaminWeb.TromsoSarHoistController do
     |> assign(:craft, "Westland Sea King")
     |> render(:dispatch)
   end
+
+  # endregion: dispatch-craft
 end

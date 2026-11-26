@@ -8,8 +8,12 @@ defmodule PhoenixMultivitaminWeb.ParoInboundPlug do
     conn
     |> assign(:station, "Paro valley")
     |> assign(:clerk, "Kinley")
+    # region: split-path
+    # focus: Enum.join(conn.script_name, "/")
     |> assign(:request_path, conn.request_path)
     |> assign(:script_name, Enum.join(conn.script_name, "/"))
     |> assign(:path_info, Enum.join(conn.path_info, "/"))
+
+    # endregion: split-path
   end
 end

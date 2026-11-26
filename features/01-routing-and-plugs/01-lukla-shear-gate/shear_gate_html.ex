@@ -32,7 +32,10 @@ defmodule PhoenixMultivitaminWeb.LuklaShearGateHTML do
       <div class="scenario">
         <h2>Plug order</h2>
         <ol id="pipeline-trace">
+          <%!-- region: plug-order --%>
+          <%!-- focus: :for={step <- @pipeline_trace} --%>
           <li :for={step <- @pipeline_trace} id={"trace-#{step}"}>{step}</li>
+          <%!-- endregion: plug-order --%>
         </ol>
       </div>
 

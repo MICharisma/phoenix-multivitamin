@@ -1,0 +1,48 @@
+{
+  "title": "Shannon avgas office",
+  "source": "avgas_controller.ex",
+  "steps": [
+    {
+      "label": "Pass apron, grade and bowser to the controller plug",
+      "api": "Plug.Builder.plug/2",
+      "regions": [
+        {
+          "name": "plug-with-opts",
+          "role": "primary"
+        }
+      ]
+    },
+    {
+      "label": "Turn the keyword list into a map in init/1",
+      "api": "Plug.init/1",
+      "regions": [
+        {
+          "name": "avgas_plug.ex#transform-opts",
+          "role": "primary"
+        },
+        {
+          "name": "plug-with-opts",
+          "role": "setup"
+        }
+      ]
+    },
+    {
+      "label": "Receive that map in call/2",
+      "api": "Plug.call/2",
+      "regions": [
+        {
+          "name": "avgas_plug.ex#receive-map",
+          "role": "primary"
+        },
+        {
+          "name": "avgas_plug.ex#transform-opts",
+          "role": "setup"
+        },
+        {
+          "name": "render-office",
+          "role": "result"
+        }
+      ]
+    }
+  ]
+}

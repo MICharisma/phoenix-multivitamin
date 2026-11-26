@@ -5,6 +5,8 @@ defmodule PhoenixMultivitaminWeb.ChangiHydrantPlug do
   def init(opts), do: opts
 
   def call(conn, _opts) do
+    # region: pick-shift
+    # focus: conn.params["shift"] || header_shift(conn)
     shift =
       case conn.params["shift"] || header_shift(conn) do
         "day" -> "day"
@@ -12,10 +14,16 @@ defmodule PhoenixMultivitaminWeb.ChangiHydrantPlug do
         _ -> "graveyard"
       end
 
+    # endregion: pick-shift
+
+    # region: assign-shift
+    # focus: assign(:shift, shift)
     conn
     |> assign(:shift, shift)
     |> assign(:hydrant, "Changi hydrant pit 12")
     |> assign(:apron, "taxiway N")
+
+    # endregion: assign-shift
   end
 
   defp header_shift(conn) do

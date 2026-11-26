@@ -22,8 +22,11 @@ defmodule PhoenixMultivitaminWeb.UshuaiaWatchController do
     |> render(:index)
   end
 
+  # region: watch-params
+  # focus: %{"clerk" => clerk, "id" => id}
   def show(conn, %{"clerk" => clerk, "id" => id}) do
     watch = Enum.find(Map.fetch!(@watches, clerk), &(&1.id == id))
+    # endregion: watch-params
 
     conn
     |> assign(:page_title, "Ushuaia austral pipeline")
