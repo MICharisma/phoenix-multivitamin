@@ -655,3 +655,67 @@ and the client opcode are not spelled the same.
 `JS.ignore_attributes/1` in the template.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
+
+## Mailers with Swoosh
+
+### `Mailer.deliver/2` with `adapter: Local` bypasses the Test mailbox
+
+**What happens.** Test config sets
+`adapter: Swoosh.Adapters.Test`. Calling
+`Mailer.deliver(email, adapter: Swoosh.Adapters.Local)` still stores the
+email in `Swoosh.Adapters.Local.Storage.Memory` and returns a Message-ID.
+`assert_email_sent` / `refute_email_sent` see nothing, because the Test
+adapter never received the mail.
+
+**Why it matters.** A scenario that "delivered" for `/dev/mailbox` looks
+like a silent failure under `Swoosh.TestAssertions`. The Local override and
+the Test mailbox are separate channels.
+
+**What to do.** Assert against `Memory.all/0` (or the returned Message-ID)
+when the call overrides to Local. Use `assert_email_sent` only for the
+configured Test adapter path.
+
+**Seen in:** [Salvador Pelourinho mailer](features/22-mailers-with-swoosh/04-salvador-pelourinho-mailer/),
+[Lalibela rock mailer](features/22-mailers-with-swoosh/13-lalibela-rock-mailer/).
+
+### `deliver_many/1` posts `{:emails, list}`, not `{:email, one}`
+
+**What happens.** `Mailer.deliver_many(emails)` through the Test adapter
+sends one `{:emails, list}` message. `assert_email_sent(subject: ...)`
+times out. `assert_emails_sent([%{subject: ...}, ...])` matches.
+
+**Why it matters.** A roster send that looks identical to three single
+delivers fails the singular assertion even though the emails left.
+
+**What to do.** Use `assert_emails_sent/1` (and `refute_emails_sent/0`) for
+`deliver_many`. Keep `assert_email_sent` for `deliver/1`.
+
+**Seen in:** [Kumasi garden mailer](features/22-mailers-with-swoosh/12-kumasi-garden-mailer/).
+
+### Missing `from` returns `{:error, :from_not_set}` before the adapter runs
+
+**What happens.** An email built with `to`, `subject`, and `text_body` but
+no `from` makes `Mailer.deliver/1` return `{:error, :from_not_set}`. The
+Test adapter receives nothing; `refute_email_sent/0` passes.
+
+**Why it matters.** The failure looks like an adapter outage. It is a
+Mailer sanity check. Custom adapters never see the email.
+
+**What to do.** Pattern-match `{:error, :from_not_set}` separately from
+adapter errors. Set `from/2` before deliver.
+
+**Seen in:** [Luxor Nile mailer](features/22-mailers-with-swoosh/10-luxor-nile-mailer/).
+
+### `attachment/2` prepends; the last pipe step is first in the list
+
+**What happens.** Piping two CSV cook cards through `attachment/2` yields
+`attachments` ordered `[nose-gear.csv, aft-spar.csv]` when the reduce
+applied aft-spar first. Each call prepends.
+
+**Why it matters.** Asserting `Enum.map(attachments, & &1.filename) ==
+input_order` fails even though both files are present.
+
+**What to do.** Assert with sorted names, membership, or the reverse of
+pipe order. Do not assume append.
+
+**Seen in:** [Curitiba wire mailer](features/22-mailers-with-swoosh/06-curitiba-wire-mailer/).
