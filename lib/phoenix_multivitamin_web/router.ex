@@ -59,6 +59,14 @@ defmodule PhoenixMultivitaminWeb.Router do
     plug PhoenixMultivitaminWeb.UshuaiaAustralPlug
   end
 
+  pipeline :lyon_accept_language do
+    plug PhoenixMultivitaminWeb.LyonAcceptLanguagePlug
+  end
+
+  pipeline :doha_locale do
+    plug PhoenixMultivitaminWeb.DohaLocalePlug
+  end
+
   # Bottled LiveViews are drawn first so their static paths win over the
   # planned catch-all. They use full module names so the web-namespace alias
   # does not wrap them. Put `live_module` on the slot in that feature's
@@ -146,6 +154,22 @@ defmodule PhoenixMultivitaminWeb.Router do
     get "/features/09-forms-and-changesets/08-dili-controller-slip/slips/:destination",
         PhoenixMultivitaminWeb.DiliControllerSlipController,
         :show
+  end
+
+  # Feature 24 — Gettext translations. Path slugs live here; domain copy and
+  # locale plugs live in each scenario folder.
+  scope "/features/24-gettext-translations" do
+    pipe_through :browser
+
+    scope "/05-lyon-accept-language" do
+      pipe_through :lyon_accept_language
+      get "/atis", PhoenixMultivitaminWeb.LyonAcceptLanguageController, :show
+    end
+
+    scope "/13-doha-hamad-capstone" do
+      pipe_through :doha_locale
+      get "/desk", PhoenixMultivitaminWeb.DohaHamadCapstoneController, :show
+    end
   end
 
   # The external uploader uses a short-lived signed capability instead of a

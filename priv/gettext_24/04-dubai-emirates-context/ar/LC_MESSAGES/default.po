@@ -1,0 +1,16 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgctxt "gate state"
+msgid "open"
+msgstr "مفتوحة"
+
+msgctxt "stand state"
+msgid "open"
+msgstr "شاغر"
+
+msgctxt "unknown surface"
+msgid "open"
+msgstr "مفتوح"

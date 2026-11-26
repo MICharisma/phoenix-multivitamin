@@ -1,0 +1,16 @@
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Gate open for boarding"
+msgstr "Porte ouverte pour l'embarquement"
+
+msgid "Gate closed"
+msgstr "Porte fermée"
+
+msgid "Gate on hold"
+msgstr "Porte en attente"
+
+msgid "Unknown gate"
+msgstr "Porte inconnue"

@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "can't be blank"
+msgstr "لا يمكن أن يكون فارغًا"
+
+msgid "must be greater than %{number}"
+msgstr "يجب أن يكون أكبر من %{number}"

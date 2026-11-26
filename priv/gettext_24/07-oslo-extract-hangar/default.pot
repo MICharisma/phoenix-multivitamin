@@ -1,0 +1,10 @@
+## This file is a PO Template file.
+## Run `mix gettext.extract` to bring it up to date.
+msgid ""
+msgstr ""
+
+msgid "Hangar bay clear"
+msgstr ""
+
+msgid "Plate stamped for inspection"
+msgstr ""

@@ -3,86 +3,99 @@
   slug: "24-gettext-translations",
   title: "Gettext translations",
   summary:
-    "gettext, ngettext, dgettext, locales, and extracted messages for copy that a watch actually speaks.",
+    "gettext, ngettext, dgettext, pgettext, locales, domains, and extracted messages for copy that a watch actually speaks.",
   official: "https://hexdocs.pm/gettext/Gettext.html",
   slots: [
     %{
       number: 1,
-      slug: "01-dzaoudzi-shimasiwa-button",
-      title: "Dzaoudzi Shimaore button",
-      bottled: false
+      slug: "01-reykjavik-hold-short",
+      title: "Reykjavík hold-short",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ReykjavikHoldShortLive
     },
     %{
       number: 2,
-      slug: "02-noumea-kanak-locale",
-      title: "Nouméa Kanak locale",
-      bottled: false
+      slug: "02-warsaw-lot-apron",
+      title: "Warsaw LOT apron",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.WarsawLotApronLive
     },
     %{
       number: 3,
-      slug: "03-port-vila-bislama-phrases",
-      title: "Port Vila Bislama phrases",
-      bottled: false
+      slug: "03-casablanca-ram-domain",
+      title: "Casablanca RAM domain",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CasablancaRamDomainLive
     },
     %{
       number: 4,
-      slug: "04-honiara-pijin-gettext",
-      title: "Honiara Pijin gettext",
-      bottled: false
+      slug: "04-dubai-emirates-context",
+      title: "Dubai Emirates context",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.DubaiEmiratesContextLive
     },
     %{
       number: 5,
-      slug: "05-suva-viti-phrases",
-      title: "Suva Viti phrases",
-      bottled: false
+      slug: "05-lyon-accept-language",
+      title: "Lyon Accept-Language",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LyonAcceptLanguageLive
     },
     %{
       number: 6,
-      slug: "06-nadi-coral-dngettext",
-      title: "Nadi coral dngettext",
-      bottled: false
+      slug: "06-sao-paulo-put-locale",
+      title: "São Paulo put_locale",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SaoPauloPutLocaleLive
     },
     %{
       number: 7,
-      slug: "07-apia-polynesian-locale",
-      title: "Apia Polynesian locale",
-      bottled: false
+      slug: "07-oslo-extract-hangar",
+      title: "Oslo extract hangar",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.OsloExtractHangarLive
     },
     %{
       number: 8,
-      slug: "08-nukualofa-tongan-phrases",
-      title: "Nukuʻalofa Tongan phrases",
-      bottled: false
+      slug: "08-moscow-sheremetyevo-plurals",
+      title: "Moscow Sheremetyevo plurals",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.MoscowSheremetyevoPluralsLive
     },
     %{
       number: 9,
-      slug: "09-tarawa-gilbertese-gettext",
-      title: "Tarawa Gilbertese gettext",
-      bottled: false
+      slug: "09-cairo-egyptair-bindings",
+      title: "Cairo EgyptAir bindings",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CairoEgyptairBindingsLive
     },
     %{
       number: 10,
-      slug: "10-majuro-marshallese-locale",
-      title: "Majuro Marshallese locale",
-      bottled: false
+      slug: "10-riyadh-with-locale",
+      title: "Riyadh with_locale",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.RiyadhWithLocaleLive
     },
     %{
       number: 11,
-      slug: "11-koror-palauan-phrases",
-      title: "Koror Palauan phrases",
-      bottled: false
+      slug: "11-krakow-fallback-msgid",
+      title: "Kraków fallback msgid",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.KrakowFallbackMsgidLive
     },
     %{
       number: 12,
-      slug: "12-hagatna-chamorro-gettext",
-      title: "Hagåtña Chamorro gettext",
-      bottled: false
+      slug: "12-tunis-on-mount-locale",
+      title: "Tunis on_mount locale",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.TunisOnMountLocaleLive
     },
     %{
       number: 13,
-      slug: "13-pago-pago-samoan-locale",
-      title: "Pago Pago Samoan locale",
-      bottled: false
+      slug: "13-doha-hamad-capstone",
+      title: "Doha Hamad capstone",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.DohaHamadCapstoneLive
     }
   ]
 }
