@@ -12,7 +12,9 @@ defmodule PhoenixMultivitaminWeb.SharjahCreekHailLiveTest do
     {:ok, ramp, _html} = live(build_conn(), @path)
 
     tower
-    |> form("#hail-form", sharjah_creek_hail: %{callsign: "a6-shj", reporting_point: "Mamzar", altitude_ft: 1000})
+    |> form("#hail-form",
+      sharjah_creek_hail: %{callsign: "a6-shj", reporting_point: "Mamzar", altitude_ft: 1000}
+    )
     |> render_submit()
 
     %SharjahCreekHail{id: id} = Repo.get_by!(SharjahCreekHail, callsign: "A6-SHJ")
@@ -25,7 +27,11 @@ defmodule PhoenixMultivitaminWeb.SharjahCreekHailLiveTest do
     SharjahCreekHails.subscribe()
 
     {:ok, hail} =
-      SharjahCreekHails.log_hail(%{"callsign" => "A6-KLG", "reporting_point" => "Khalid Lagoon", "altitude_ft" => "800"})
+      SharjahCreekHails.log_hail(%{
+        "callsign" => "A6-KLG",
+        "reporting_point" => "Khalid Lagoon",
+        "altitude_ft" => "800"
+      })
 
     assert_receive {SharjahCreekHails, :hail_logged, ^hail}
     assert has_element?(tower, "#hails-#{hail.id}", "A6-KLG over Khalid Lagoon")
@@ -36,7 +42,9 @@ defmodule PhoenixMultivitaminWeb.SharjahCreekHailLiveTest do
     SharjahCreekHails.subscribe()
 
     tower
-    |> form("#hail-form", sharjah_creek_hail: %{callsign: "N123AB", reporting_point: "Al Khan", altitude_ft: 2500})
+    |> form("#hail-form",
+      sharjah_creek_hail: %{callsign: "N123AB", reporting_point: "Al Khan", altitude_ft: 2500}
+    )
     |> render_submit()
 
     assert has_element?(tower, "#hail-form", "UAE registration")
@@ -48,7 +56,11 @@ defmodule PhoenixMultivitaminWeb.SharjahCreekHailLiveTest do
 
   test "saved hails load on mount before any broadcast", %{conn: conn} do
     {:ok, earlier} =
-      SharjahCreekHails.log_hail(%{callsign: "A6-MZR", reporting_point: "Creek Mouth", altitude_ft: 600})
+      SharjahCreekHails.log_hail(%{
+        callsign: "A6-MZR",
+        reporting_point: "Creek Mouth",
+        altitude_ft: 600
+      })
 
     {:ok, tower, _html} = live(conn, @path)
     assert has_element?(tower, "#hails-#{earlier.id}", "A6-MZR over Creek Mouth at 600 ft")

@@ -33,7 +33,12 @@ defmodule PhoenixMultivitaminWeb.MuscatKhareefAlertLive do
         true -> :advisory
       end
 
-    Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:khareef, level, %{gust_kt: gust_kt}})
+    Phoenix.PubSub.broadcast(
+      PhoenixMultivitamin.PubSub,
+      @topic,
+      {:khareef, level, %{gust_kt: gust_kt}}
+    )
+
     {:noreply, socket}
   end
 
@@ -77,8 +82,11 @@ defmodule PhoenixMultivitaminWeb.MuscatKhareefAlertLive do
         <select id="gust-kt" name="gust_kt" class="rounded-lg border border-stone-400 px-3 py-2">
           <option :for={gust <- [18, 26, 34, 48]} value={gust}>{gust} kt</option>
         </select>
-        <button id="report-gust" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <button
+          id="report-gust"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Report gust
         </button>
       </form>

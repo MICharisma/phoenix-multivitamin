@@ -48,7 +48,8 @@ defmodule PhoenixMultivitaminWeb.JeddahRedSeaBoardLive do
 
       {:noreply, assign(socket, :payload_sizes, sizes)}
     else
-      _rejected -> {:noreply, put_flash(socket, :error, "Use a Red Sea gate A1–D40 on a listed flight")}
+      _rejected ->
+        {:noreply, put_flash(socket, :error, "Use a Red Sea gate A1–D40 on a listed flight")}
     end
   end
 
@@ -101,10 +102,18 @@ defmodule PhoenixMultivitaminWeb.JeddahRedSeaBoardLive do
         <select id="gate-flight" name="flight" class="rounded-lg border border-stone-400 px-3 py-2">
           <option :for={flight <- @board} value={flight.number}>{flight.number}</option>
         </select>
-        <input id="gate-new" name="gate" type="text" placeholder="D7"
-          class="rounded-lg border border-stone-400 px-3 py-2" />
-        <button id="move-gate" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <input
+          id="gate-new"
+          name="gate"
+          type="text"
+          placeholder="D7"
+          class="rounded-lg border border-stone-400 px-3 py-2"
+        />
+        <button
+          id="move-gate"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Move gate
         </button>
       </form>

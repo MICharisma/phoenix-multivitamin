@@ -35,12 +35,16 @@ defmodule PhoenixMultivitaminWeb.TbilisiMtatsmindaReliefLive do
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Relief not sent: #{reason |> Atom.to_string() |> String.replace("_", " ")}")
+         |> put_flash(
+           :error,
+           "Relief not sent: #{reason |> Atom.to_string() |> String.replace("_", " ")}"
+         )
          |> assign_relief_form(relief_params)}
     end
   end
 
-  defp assign_relief_form(socket, params), do: assign(socket, :relief_form, to_form(params, as: :relief))
+  defp assign_relief_form(socket, params),
+    do: assign(socket, :relief_form, to_form(params, as: :relief))
 
   @impl true
   def render(assigns) do
@@ -58,12 +62,20 @@ defmodule PhoenixMultivitaminWeb.TbilisiMtatsmindaReliefLive do
       </header>
       <.scenario_identity clerk={@clerk} craft={@craft} />
 
-      <.form for={@relief_form} id="relief-form" phx-submit="send_relief" class="scenario my-6 space-y-4">
+      <.form
+        for={@relief_form}
+        id="relief-form"
+        phx-submit="send_relief"
+        class="scenario my-6 space-y-4"
+      >
         <.input field={@relief_form[:position]} type="select" label="Position" options={@positions} />
         <.input field={@relief_form[:incoming]} type="text" label="Incoming controller" />
         <.input field={@relief_form[:minutes]} type="number" label="Minutes until relief" />
-        <button id="send-relief" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <button
+          id="send-relief"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Send relief to the tower
         </button>
       </.form>

@@ -14,7 +14,11 @@ defmodule PhoenixMultivitaminWeb.AmmanNabateanHailLive do
 
   @pubsub PhoenixMultivitamin.PubSub
   @station_topic "amman:nabatean-station"
-  @watches %{"petra" => "Petra watch", "wadi-rum" => "Wadi Rum watch", "dead-sea" => "Dead Sea watch"}
+  @watches %{
+    "petra" => "Petra watch",
+    "wadi-rum" => "Wadi Rum watch",
+    "dead-sea" => "Dead Sea watch"
+  }
 
   @impl true
   def mount(_params, _session, socket) do
@@ -85,9 +89,15 @@ defmodule PhoenixMultivitaminWeb.AmmanNabateanHailLive do
       <.scenario_identity clerk={@clerk} craft={@craft} />
 
       <nav class="watch-switcher">
-        <.link :for={{slug, label} <- Enum.sort(@watches)} id={"switch-#{slug}"}
+        <.link
+          :for={{slug, label} <- Enum.sort(@watches)}
+          id={"switch-#{slug}"}
           patch={~p"/features/15-pubsub/12-amman-nabatean-hail?#{[watch: slug]}"}
-          class={["rounded px-3 py-1 transition hover:bg-green-50", slug == @watch && "font-bold underline"]}>
+          class={[
+            "rounded px-3 py-1 transition hover:bg-green-50",
+            slug == @watch && "font-bold underline"
+          ]}
+        >
           {label}
         </.link>
       </nav>
@@ -98,10 +108,18 @@ defmodule PhoenixMultivitaminWeb.AmmanNabateanHailLive do
           <option value="station">Whole station</option>
           <option :for={{slug, label} <- Enum.sort(@watches)} value={slug}>{label}</option>
         </select>
-        <input id="hail-text" name="text" type="text" placeholder="Dust over the King's Highway"
-          class="rounded-lg border border-stone-400 px-3 py-2" />
-        <button id="send-hail" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <input
+          id="hail-text"
+          name="text"
+          type="text"
+          placeholder="Dust over the King's Highway"
+          class="rounded-lg border border-stone-400 px-3 py-2"
+        />
+        <button
+          id="send-hail"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Send hail
         </button>
       </form>

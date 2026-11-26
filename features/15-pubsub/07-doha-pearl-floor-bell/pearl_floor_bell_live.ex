@@ -79,15 +79,31 @@ defmodule PhoenixMultivitaminWeb.DohaPearlFloorBellLive do
       </dl>
 
       <div class="scenario my-6 grid gap-3 sm:grid-cols-2">
-        <div :for={gate <- @gates} id={"gate-#{gate}"}
-          class={["rounded-lg border p-3", MapSet.member?(@ringing, gate) && "border-red-800 bg-red-50 ringing"]}>
+        <div
+          :for={gate <- @gates}
+          id={"gate-#{gate}"}
+          class={[
+            "rounded-lg border p-3",
+            MapSet.member?(@ringing, gate) && "border-red-800 bg-red-50 ringing"
+          ]}
+        >
           <strong>{gate}</strong>
-          <button id={"ring-#{gate}"} type="button" phx-click="ring_bell" phx-value-gate={gate}
-            class="ml-3 rounded bg-green-900 px-3 py-1 text-white transition hover:bg-green-800">
+          <button
+            id={"ring-#{gate}"}
+            type="button"
+            phx-click="ring_bell"
+            phx-value-gate={gate}
+            class="ml-3 rounded bg-green-900 px-3 py-1 text-white transition hover:bg-green-800"
+          >
             Ring
           </button>
-          <button id={"silence-#{gate}"} type="button" phx-click="silence_bell" phx-value-gate={gate}
-            class="ml-1 rounded border border-stone-400 px-3 py-1 transition hover:bg-stone-100">
+          <button
+            id={"silence-#{gate}"}
+            type="button"
+            phx-click="silence_bell"
+            phx-value-gate={gate}
+            class="ml-1 rounded border border-stone-400 px-3 py-1 transition hover:bg-stone-100"
+          >
             Silence
           </button>
         </div>

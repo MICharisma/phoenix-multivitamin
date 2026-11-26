@@ -41,7 +41,12 @@ defmodule PhoenixMultivitaminWeb.BeirutCedarsWarningLive do
   def handle_event("issue_warning", warning_params, socket) do
     case CedarsWarning.issue(warning_params, socket.assigns.desk) do
       {:ok, warning} ->
-        Phoenix.PubSub.broadcast_from!(PhoenixMultivitamin.PubSub, self(), @topic, {:cedars_warning, warning})
+        Phoenix.PubSub.broadcast_from!(
+          PhoenixMultivitamin.PubSub,
+          self(),
+          @topic,
+          {:cedars_warning, warning}
+        )
 
         {:noreply,
          socket
@@ -91,9 +96,15 @@ defmodule PhoenixMultivitaminWeb.BeirutCedarsWarningLive do
       <.scenario_identity clerk={@clerk} craft={@craft} />
 
       <nav class="watch-switcher">
-        <.link :for={{slug, label} <- Enum.sort(@desks)} id={"desk-#{slug}"}
+        <.link
+          :for={{slug, label} <- Enum.sort(@desks)}
+          id={"desk-#{slug}"}
           patch={~p"/features/15-pubsub/13-beirut-cedars-warning?#{[desk: slug]}"}
-          class={["rounded px-3 py-1 transition hover:bg-green-50", label == @desk && "font-bold underline"]}>
+          class={[
+            "rounded px-3 py-1 transition hover:bg-green-50",
+            label == @desk && "font-bold underline"
+          ]}
+        >
           {label}
         </.link>
       </nav>
@@ -106,8 +117,11 @@ defmodule PhoenixMultivitaminWeb.BeirutCedarsWarningLive do
         <select id="warning-runway" name="runway" class="rounded-lg border border-stone-400 px-3 py-2">
           <option :for={runway <- @runways} value={runway}>Runway {runway}</option>
         </select>
-        <button id="issue-warning" type="submit"
-          class="rounded-lg bg-red-900 px-5 py-2 text-white transition hover:bg-red-800">
+        <button
+          id="issue-warning"
+          type="submit"
+          class="rounded-lg bg-red-900 px-5 py-2 text-white transition hover:bg-red-800"
+        >
           Issue warning
         </button>
       </form>

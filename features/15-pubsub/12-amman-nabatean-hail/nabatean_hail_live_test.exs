@@ -27,11 +27,15 @@ defmodule PhoenixMultivitaminWeb.AmmanNabateanHailLiveTest do
 
   test "patching to another watch swaps the sender subscription", %{conn: conn} do
     {:ok, desk, _html} = live(conn, @path)
-    assert [{_pid, [NabateanWatchSender | "petra"]}] = Registry.lookup(PhoenixMultivitamin.PubSub, @topic)
+
+    assert [{_pid, [NabateanWatchSender | "petra"]}] =
+             Registry.lookup(PhoenixMultivitamin.PubSub, @topic)
 
     desk |> element("#switch-dead-sea") |> render_click()
     assert has_element?(desk, "#current-watch", "Dead Sea watch")
-    assert [{_pid, [NabateanWatchSender | "dead-sea"]}] = Registry.lookup(PhoenixMultivitamin.PubSub, @topic)
+
+    assert [{_pid, [NabateanWatchSender | "dead-sea"]}] =
+             Registry.lookup(PhoenixMultivitamin.PubSub, @topic)
 
     hail(desk, "petra", "Siq closed to vehicles")
     hail(desk, "dead-sea", "Low-level haze below sea level")

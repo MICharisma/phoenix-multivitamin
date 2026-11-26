@@ -60,14 +60,26 @@ defmodule PhoenixMultivitaminWeb.SharjahCreekHailLive do
       </header>
       <.scenario_identity clerk={@clerk} craft={@craft} />
 
-      <.form for={@hail_form} id="hail-form" phx-change="validate_hail" phx-submit="log_hail"
-        class="scenario my-6 space-y-4">
+      <.form
+        for={@hail_form}
+        id="hail-form"
+        phx-change="validate_hail"
+        phx-submit="log_hail"
+        class="scenario my-6 space-y-4"
+      >
         <.input field={@hail_form[:callsign]} type="text" label="Registration" />
-        <.input field={@hail_form[:reporting_point]} type="select" label="Reporting point"
-          options={@reporting_points} />
+        <.input
+          field={@hail_form[:reporting_point]}
+          type="select"
+          label="Reporting point"
+          options={@reporting_points}
+        />
         <.input field={@hail_form[:altitude_ft]} type="number" label="Altitude (ft)" />
-        <button id="log-hail" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <button
+          id="log-hail"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Log hail
         </button>
       </.form>

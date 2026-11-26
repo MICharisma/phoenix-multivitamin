@@ -7,7 +7,11 @@ defmodule PhoenixMultivitaminWeb.SalalahMonsoonCallLiveTest do
   @topic "salalah:monsoon-runway-calls"
 
   defp runway_call(runway, condition) do
-    Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:runway_call, runway, condition})
+    Phoenix.PubSub.broadcast(
+      PhoenixMultivitamin.PubSub,
+      @topic,
+      {:runway_call, runway, condition}
+    )
   end
 
   defp subscriber_pids do
@@ -68,11 +72,15 @@ defmodule PhoenixMultivitaminWeb.SalalahMonsoonCallLiveTest do
     assert subscriber_pids() == [apron.pid]
 
     ref = Process.monitor(apron.pid)
-    assert {:error, {:live_redirect, %{to: "/"}}} = apron |> element("#leave-apron") |> render_click()
+
+    assert {:error, {:live_redirect, %{to: "/"}}} =
+             apron |> element("#leave-apron") |> render_click()
+
     assert_receive {:DOWN, ^ref, :process, _pid, _reason}
 
     # Registry partitions drop a dead subscriber when they handle its exit signal.
-    for {_id, partition, :worker, _modules} <- Supervisor.which_children(PhoenixMultivitamin.PubSub) do
+    for {_id, partition, :worker, _modules} <-
+          Supervisor.which_children(PhoenixMultivitamin.PubSub) do
       :sys.get_state(partition)
     end
 

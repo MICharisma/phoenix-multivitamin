@@ -27,7 +27,11 @@ defmodule PhoenixMultivitaminWeb.DohaPearlFloorBellLiveTest do
 
     floor |> element("#ring-C12") |> render_click()
 
-    assert_receive %Broadcast{topic: @topic, event: "ring", payload: %{gate: "C12", rung_by: "Maryam"}}
+    assert_receive %Broadcast{
+      topic: @topic,
+      event: "ring",
+      payload: %{gate: "C12", rung_by: "Maryam"}
+    }
   end
 
   test "an atom event is refused before anything is broadcast" do

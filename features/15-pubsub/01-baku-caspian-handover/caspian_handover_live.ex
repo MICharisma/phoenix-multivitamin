@@ -67,22 +67,33 @@ defmodule PhoenixMultivitaminWeb.BakuCaspianHandoverLive do
       <.scenario_identity clerk={@clerk} craft={@craft} />
 
       <p id="listening-state" class="mount-banner">
-        {if @listening?, do: "Subscribed to the Caspian handover topic",
+        {if @listening?,
+          do: "Subscribed to the Caspian handover topic",
           else: "Static render: not subscribed yet"}
       </p>
 
-      <.form for={@handover_form} id="handover-form" phx-submit="post_handover"
-        class="scenario my-6 space-y-4">
+      <.form
+        for={@handover_form}
+        id="handover-form"
+        phx-submit="post_handover"
+        class="scenario my-6 space-y-4"
+      >
         <.input field={@handover_form[:sector]} type="select" label="Sector" options={@sectors} />
         <.input field={@handover_form[:controller]} type="text" label="Incoming controller" />
-        <button id="post-handover" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <button
+          id="post-handover"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Post handover
         </button>
       </.form>
 
       <ol id="handover-log" class="watch-log">
-        <li :for={{{sector, controller}, index} <- Enum.with_index(@handovers)} id={"handover-#{index}"}>
+        <li
+          :for={{{sector, controller}, index} <- Enum.with_index(@handovers)}
+          id={"handover-#{index}"}
+        >
           {sector} handed to {controller}
         </li>
       </ol>

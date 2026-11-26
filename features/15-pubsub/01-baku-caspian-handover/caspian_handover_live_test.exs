@@ -10,7 +10,12 @@ defmodule PhoenixMultivitaminWeb.BakuCaspianHandoverLiveTest do
     html = conn |> get(@path) |> html_response(200)
     assert html =~ "Static render: not subscribed yet"
 
-    Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:handover_posted, "Absheron", "Rauf"})
+    Phoenix.PubSub.broadcast(
+      PhoenixMultivitamin.PubSub,
+      @topic,
+      {:handover_posted, "Absheron", "Rauf"}
+    )
+
     refute_received {:handover_posted, _sector, _controller}
   end
 
@@ -31,10 +36,18 @@ defmodule PhoenixMultivitaminWeb.BakuCaspianHandoverLiveTest do
     {:ok, desk, _html} = live(conn, @path)
     Phoenix.PubSub.subscribe(PhoenixMultivitamin.PubSub, @topic)
 
-    Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:handover_posted, "Absheron", "Rauf"})
+    Phoenix.PubSub.broadcast(
+      PhoenixMultivitamin.PubSub,
+      @topic,
+      {:handover_posted, "Absheron", "Rauf"}
+    )
+
     assert has_element?(desk, "#handover-0", "Absheron handed to Rauf")
 
-    render_submit(desk, "post_handover", %{"handover" => %{"sector" => "Tbilisi-East", "controller" => "Nino"}})
+    render_submit(desk, "post_handover", %{
+      "handover" => %{"sector" => "Tbilisi-East", "controller" => "Nino"}
+    })
+
     assert has_element?(desk, "#flash-error", "Caspian sectors")
     assert_received {:handover_posted, "Absheron", "Rauf"}
     refute_received {:handover_posted, "Tbilisi-East", _controller}

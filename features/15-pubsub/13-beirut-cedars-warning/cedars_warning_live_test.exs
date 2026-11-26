@@ -19,7 +19,9 @@ defmodule PhoenixMultivitaminWeb.BeirutCedarsWarningLiveTest do
 
     issue(tower, "wind_shear", "16")
 
-    assert_receive {:cedars_warning, %CedarsWarning{id: id, issued_by: "Beirut Tower", runway: "16"}}
+    assert_receive {:cedars_warning,
+                    %CedarsWarning{id: id, issued_by: "Beirut Tower", runway: "16"}}
+
     assert has_element?(apron, "#warnings-#{id}", "Wind shear on runway 16 (Beirut Tower)")
     assert has_element?(tower, "#warnings-#{id} .warning-text", "Wind shear on runway 16")
     assert has_element?(tower, "#warnings-#{id} .warning-acks", "acknowledged by Apron Control")

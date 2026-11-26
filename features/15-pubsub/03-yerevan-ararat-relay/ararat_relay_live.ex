@@ -51,7 +51,9 @@ defmodule PhoenixMultivitaminWeb.YerevanAraratRelayLive do
   end
 
   defp log_report(socket, %{desk: desk, visibility_m: metres}) do
-    line = if desk == socket.assigns.desk, do: "You relayed #{metres} m", else: "#{desk}: #{metres} m"
+    line =
+      if desk == socket.assigns.desk, do: "You relayed #{metres} m", else: "#{desk}: #{metres} m"
+
     update(socket, :reports, &[line | &1])
   end
 
@@ -74,10 +76,18 @@ defmodule PhoenixMultivitaminWeb.YerevanAraratRelayLive do
       <p id="desk-name" class="mount-banner">{@desk}</p>
       <form id="visibility-form" phx-submit="relay_visibility" class="scenario my-6 flex gap-3">
         <label for="visibility-metres" class="font-semibold">Visibility (m)</label>
-        <input id="visibility-metres" name="metres" type="number" value="4000"
-          class="rounded-lg border border-stone-400 px-3 py-2" />
-        <button id="relay-visibility" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <input
+          id="visibility-metres"
+          name="metres"
+          type="number"
+          value="4000"
+          class="rounded-lg border border-stone-400 px-3 py-2"
+        />
+        <button
+          id="relay-visibility"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Relay
         </button>
       </form>

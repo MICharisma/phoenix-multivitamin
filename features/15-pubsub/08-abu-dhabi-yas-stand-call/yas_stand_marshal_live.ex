@@ -43,8 +43,13 @@ defmodule PhoenixMultivitaminWeb.YasStandMarshalLive do
     <section id={"marshal-panel-#{@stand}"} class="scenario">
       <h2>Stand {@stand} · {@marshal}</h2>
       <p id={"inbound-#{@stand}"}>{@inbound || "No aircraft called"}</p>
-      <button :if={@inbound} id={"ready-#{@stand}-button"} type="button" phx-click="marshal_ready"
-        class="rounded-lg bg-green-900 px-4 py-2 text-white transition hover:bg-green-800">
+      <button
+        :if={@inbound}
+        id={"ready-#{@stand}-button"}
+        type="button"
+        phx-click="marshal_ready"
+        class="rounded-lg bg-green-900 px-4 py-2 text-white transition hover:bg-green-800"
+      >
         Wands up for {@inbound}
       </button>
     </section>

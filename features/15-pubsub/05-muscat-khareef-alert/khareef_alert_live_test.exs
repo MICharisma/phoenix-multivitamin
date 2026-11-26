@@ -20,7 +20,12 @@ defmodule PhoenixMultivitaminWeb.MuscatKhareefAlertLiveTest do
   test "only the clear timer for the current serial lifts the alert", %{conn: conn} do
     {:ok, ops, _html} = live(conn, @path)
 
-    Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:khareef, :amber, %{gust_kt: 34}})
+    Phoenix.PubSub.broadcast(
+      PhoenixMultivitamin.PubSub,
+      @topic,
+      {:khareef, :amber, %{gust_kt: 34}}
+    )
+
     Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:khareef, :red, %{gust_kt: 46}})
     assert has_element?(ops, "#khareef-alert", "Alert 2: RED")
 
@@ -35,7 +40,12 @@ defmodule PhoenixMultivitaminWeb.MuscatKhareefAlertLiveTest do
   test "malformed broadcasts fall to the catch-all instead of crashing", %{conn: conn} do
     {:ok, ops, _html} = live(conn, @path)
 
-    Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:khareef, :red, %{gust_kt: "strong"}})
+    Phoenix.PubSub.broadcast(
+      PhoenixMultivitamin.PubSub,
+      @topic,
+      {:khareef, :red, %{gust_kt: "strong"}}
+    )
+
     Phoenix.PubSub.broadcast(PhoenixMultivitamin.PubSub, @topic, {:sandstorm, :amber})
 
     assert has_element?(ops, "#ignored-count", "2 stale or unknown")

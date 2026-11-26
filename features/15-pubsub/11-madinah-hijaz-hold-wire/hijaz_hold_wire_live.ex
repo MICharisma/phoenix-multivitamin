@@ -40,8 +40,11 @@ defmodule PhoenixMultivitaminWeb.MadinahHijazHoldWireLive do
          :ok <- deliver.(@pubsub, @topic, hold) do
       {:noreply, assign(socket, :last_reach, reach)}
     else
-      :error -> {:noreply, put_flash(socket, :error, "No such reach on the Hijaz wire")}
-      {:error, reason} -> {:noreply, put_flash(socket, :error, "Hold not sent: #{inspect(reason)}")}
+      :error ->
+        {:noreply, put_flash(socket, :error, "No such reach on the Hijaz wire")}
+
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, "Hold not sent: #{inspect(reason)}")}
     end
   end
 
@@ -51,7 +54,9 @@ defmodule PhoenixMultivitaminWeb.MadinahHijazHoldWireLive do
 
   @impl true
   def handle_info({:hijaz_hold, details}, socket) do
-    line = "Hold #{details[:fix]} #{details[:minutes]} min via #{Keyword.get(details, :reach, "outside")}"
+    line =
+      "Hold #{details[:fix]} #{details[:minutes]} min via #{Keyword.get(details, :reach, "outside")}"
+
     {:noreply, update(socket, :holds, &[line | &1])}
   end
 
@@ -91,16 +96,24 @@ defmodule PhoenixMultivitaminWeb.MadinahHijazHoldWireLive do
         <select id="hold-fix" name="fix" class="rounded-lg border border-stone-400 px-3 py-2">
           <option :for={fix <- @fixes} value={fix}>{fix}</option>
         </select>
-        <input id="hold-minutes" name="minutes" type="number" value="12"
-          class="w-24 rounded-lg border border-stone-400 px-3 py-2" />
+        <input
+          id="hold-minutes"
+          name="minutes"
+          type="number"
+          value="12"
+          class="w-24 rounded-lg border border-stone-400 px-3 py-2"
+        />
         <select id="hold-reach" name="reach" class="rounded-lg border border-stone-400 px-3 py-2">
           <option value="cluster">Whole cluster</option>
           <option value="node">This node only</option>
           <option value="direct">This node by name</option>
           <option value="riyadh">Riyadh ACC node</option>
         </select>
-        <button id="issue-hold" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <button
+          id="issue-hold"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Issue hold
         </button>
       </form>

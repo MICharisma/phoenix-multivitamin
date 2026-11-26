@@ -8,7 +8,9 @@ defmodule PhoenixMultivitaminWeb.TehranAlborzWireLiveTest do
   test "each station wire lands only in that station's column", %{conn: conn} do
     {:ok, desk, _html} = live(conn, @path)
 
-    desk |> form("#wire-form", station: "THR", notice: "Runway 29 closed for sweeping") |> render_submit()
+    desk
+    |> form("#wire-form", station: "THR", notice: "Runway 29 closed for sweeping")
+    |> render_submit()
 
     assert has_element?(desk, "#last-topic code", "alborz:THR")
     assert has_element?(desk, "#wire-THR li", "Runway 29 closed for sweeping")

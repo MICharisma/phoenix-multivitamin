@@ -19,7 +19,9 @@ defmodule PhoenixMultivitamin.SharjahCreekHail do
     |> cast(attrs, [:callsign, :reporting_point, :altitude_ft])
     |> validate_required([:callsign, :reporting_point, :altitude_ft])
     |> update_change(:callsign, &String.upcase/1)
-    |> validate_format(:callsign, ~r/^A6-[A-Z]{3}$/, message: "must be a UAE registration like A6-SHJ")
+    |> validate_format(:callsign, ~r/^A6-[A-Z]{3}$/,
+      message: "must be a UAE registration like A6-SHJ"
+    )
     |> validate_inclusion(:reporting_point, @reporting_points)
     |> validate_number(:altitude_ft, greater_than_or_equal_to: 500, less_than_or_equal_to: 1500)
   end

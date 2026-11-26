@@ -67,10 +67,18 @@ defmodule PhoenixMultivitaminWeb.AbuDhabiYasStandCallLive do
         <select id="call-stand" name="stand" class="rounded-lg border border-stone-400 px-3 py-2">
           <option :for={stand <- @stands} value={stand}>Stand {stand}</option>
         </select>
-        <input id="call-flight" name="flight" type="text" placeholder="EY17"
-          class="rounded-lg border border-stone-400 px-3 py-2" />
-        <button id="call-marshal" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <input
+          id="call-flight"
+          name="flight"
+          type="text"
+          placeholder="EY17"
+          class="rounded-lg border border-stone-400 px-3 py-2"
+        />
+        <button
+          id="call-marshal"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Call marshal
         </button>
       </form>

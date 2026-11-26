@@ -43,7 +43,10 @@ defmodule PhoenixMultivitaminWeb.TehranAlborzWireLive do
   end
 
   @impl true
-  def handle_info({:alborz_wire, "alborz:" <> station, notice}, %{assigns: %{board: board}} = socket)
+  def handle_info(
+        {:alborz_wire, "alborz:" <> station, notice},
+        %{assigns: %{board: board}} = socket
+      )
       when is_map_key(board, station) do
     {:noreply, assign(socket, :board, Map.update!(board, station, &[notice | &1]))}
   end
@@ -70,16 +73,28 @@ defmodule PhoenixMultivitaminWeb.TehranAlborzWireLive do
         <select id="wire-station" name="station" class="rounded-lg border border-stone-400 px-3 py-2">
           <option :for={station <- @wire_stations} value={station}>{station}</option>
         </select>
-        <input id="wire-notice" name="notice" type="text" placeholder="Snow on the Alborz passes"
-          class="block w-full rounded-lg border border-stone-400 px-3 py-2" />
-        <button id="send-wire" type="submit"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <input
+          id="wire-notice"
+          name="notice"
+          type="text"
+          placeholder="Snow on the Alborz passes"
+          class="block w-full rounded-lg border border-stone-400 px-3 py-2"
+        />
+        <button
+          id="send-wire"
+          type="submit"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Send on the station wire
         </button>
       </form>
       <p :if={@last_topic} id="last-topic">Last wire went out on <code>{@last_topic}</code></p>
 
-      <section :for={{station, notices} <- Enum.sort(@board)} id={"wire-#{station}"} class="scenario mt-4">
+      <section
+        :for={{station, notices} <- Enum.sort(@board)}
+        id={"wire-#{station}"}
+        class="scenario mt-4"
+      >
         <h2>{station}</h2>
         <p :if={notices == []} class="planned">No wire yet</p>
         <ul class="watch-log">

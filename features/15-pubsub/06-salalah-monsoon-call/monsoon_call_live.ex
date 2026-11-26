@@ -65,12 +65,22 @@ defmodule PhoenixMultivitaminWeb.SalalahMonsoonCallLive do
       <.scenario_identity clerk={@clerk} craft={@craft} />
 
       <div class="watch-actions">
-        <button :if={!@following?} id="follow-calls" type="button" phx-click="follow_calls"
-          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800">
+        <button
+          :if={!@following?}
+          id="follow-calls"
+          type="button"
+          phx-click="follow_calls"
+          class="rounded-lg bg-green-900 px-5 py-2 text-white transition hover:bg-green-800"
+        >
           Follow runway calls
         </button>
-        <button :if={@following?} id="stop-following" type="button" phx-click="stop_following"
-          class="rounded-lg border border-green-900 px-5 py-2 text-green-900 transition hover:bg-green-50">
+        <button
+          :if={@following?}
+          id="stop-following"
+          type="button"
+          phx-click="stop_following"
+          class="rounded-lg border border-green-900 px-5 py-2 text-green-900 transition hover:bg-green-50"
+        >
           Stop following
         </button>
       </div>
