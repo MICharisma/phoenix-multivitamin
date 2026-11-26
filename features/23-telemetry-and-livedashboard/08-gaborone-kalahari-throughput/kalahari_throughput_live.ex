@@ -125,8 +125,9 @@ defmodule PhoenixMultivitaminWeb.GaboroneKalahariThroughputLive do
 
       <h1>Gaborone Kalahari throughput</h1>
       <p class="lede">
-        {@clerk} counts CRJ-900s on the {@apron} apron at {@station}.
-        <code>telemetry_poller</code> calls <code>measure_apron/0</code> every 100 ms;
+        {@clerk} counts CRJ-900s on the {@apron} apron at {@station}. <code>telemetry_poller</code>
+        calls <code>measure_apron/0</code>
+        every 100 ms;
         that MFA reads an Agent and fires <code>:telemetry.execute/3</code>.
       </p>
 

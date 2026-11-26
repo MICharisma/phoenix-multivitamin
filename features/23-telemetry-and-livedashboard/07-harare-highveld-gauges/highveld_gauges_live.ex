@@ -23,7 +23,11 @@ defmodule PhoenixMultivitaminWeb.HarareHighveldGaugesLive do
   end
 
   @impl true
-  def handle_event("log_departure", %{"flight" => flight, "runway" => runway, "roll_ms" => roll}, socket) do
+  def handle_event(
+        "log_departure",
+        %{"flight" => flight, "runway" => runway, "roll_ms" => roll},
+        socket
+      ) do
     roll_ms =
       case Integer.parse(String.trim(roll)) do
         {value, ""} -> value
@@ -57,8 +61,9 @@ defmodule PhoenixMultivitaminWeb.HarareHighveldGaugesLive do
 
       <h1>Harare Highveld gauges</h1>
       <p class="lede">
-        {@clerk} times Embraer 145 rolls at {@station} on the {@plateau}.
-        <code>summary/2</code> and <code>distribution/2</code> tag each roll by runway.
+        {@clerk} times Embraer 145 rolls at {@station} on the {@plateau}. <code>summary/2</code>
+        and <code>distribution/2</code>
+        tag each roll by runway.
       </p>
 
       <.scenario_identity clerk={@clerk} craft={@craft} />

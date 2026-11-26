@@ -61,10 +61,10 @@ defmodule PhoenixMultivitaminWeb.BeiraSofalaDurationLive do
 
       <h1>Beira Sofala duration</h1>
       <p class="lede">
-        {@clerk} checks the An-26 freight desk at {@harbour} in {@province} with
-        <code>SELECT 1</code>. Ecto emits
-        <code>[:phoenix_multivitamin, :repo, :query]</code> with
-        <code>total_time</code> and <code>query_time</code>.
+        {@clerk} checks the An-26 freight desk at {@harbour} in {@province} with <code>SELECT 1</code>. Ecto emits
+        <code>[:phoenix_multivitamin, :repo, :query]</code>
+        with <code>total_time</code>
+        and <code>query_time</code>.
       </p>
 
       <.scenario_identity clerk={@clerk} craft={@craft} />

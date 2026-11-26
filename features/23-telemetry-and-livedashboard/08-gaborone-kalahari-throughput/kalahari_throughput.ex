@@ -32,15 +32,21 @@ defmodule PhoenixMultivitaminWeb.GaboroneKalahariThroughput do
   end
 
   def measure_apron do
-    aircraft = apron_count()
+    case Process.whereis(@agent) do
+      nil ->
+        :ok
 
-    :telemetry.execute(
-      @event,
-      %{aircraft: aircraft},
-      %{apron: "Kalahari", station: "Gaborone Sir Seretse Khama", craft: "CRJ-900"}
-    )
+      _pid ->
+        aircraft = apron_count()
 
-    aircraft
+        :telemetry.execute(
+          @event,
+          %{aircraft: aircraft},
+          %{apron: "Kalahari", station: "Gaborone Sir Seretse Khama", craft: "CRJ-900"}
+        )
+
+        aircraft
+    end
   end
 
   def metrics do

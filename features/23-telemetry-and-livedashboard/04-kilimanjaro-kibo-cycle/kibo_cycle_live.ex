@@ -98,7 +98,8 @@ defmodule PhoenixMultivitaminWeb.KilimanjaroKiboCycleLive do
       <h1>Kilimanjaro Kibo cycle</h1>
       <p class="lede">
         {@clerk} logs Caravan legs around {@peak} from {@station}.
-        <code>:telemetry.attach_many/4</code> listens to ascent, descent, and summit under one id.
+        <code>:telemetry.attach_many/4</code>
+        listens to ascent, descent, and summit under one id.
       </p>
 
       <.scenario_identity clerk={@clerk} craft={@craft} />

@@ -61,7 +61,8 @@ defmodule PhoenixMultivitaminWeb.LilongweLakeCountsLive do
       <h1>Lilongwe lake counts</h1>
       <p class="lede">
         {@clerk} posts {@waterbody} visibility from {@station} before the ATR 42 departs.
-        <code>last_value/2</code> keeps the latest metres as a gauge.
+        <code>last_value/2</code>
+        keeps the latest metres as a gauge.
       </p>
 
       <.scenario_identity clerk={@clerk} craft={@craft} />
@@ -77,8 +78,7 @@ defmodule PhoenixMultivitaminWeb.LilongweLakeCountsLive do
 
       <form id="visibility-form" phx-submit="report_visibility">
         <label>
-          Visibility metres
-          <input id="metres-input" type="text" name="metres" value="8500" />
+          Visibility metres <input id="metres-input" type="text" name="metres" value="8500" />
         </label>
         <button id="report-visibility" type="submit">Report visibility</button>
       </form>
@@ -90,7 +90,7 @@ defmodule PhoenixMultivitaminWeb.LilongweLakeCountsLive do
             <p id="empty-reading">No Lake Malawi reading yet.</p>
           <% {metres, band} -> %>
             <p id="reading-label">{@latest_label}</p>
-            <p id="reading-metres">Metres: {metres}</p>
+            <p id="reading-metres">Metres: {trunc(metres)}</p>
             <p id="reading-band">Band: {band}</p>
         <% end %>
       </div>

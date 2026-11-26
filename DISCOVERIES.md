@@ -655,3 +655,82 @@ and the client opcode are not spelled the same.
 `JS.ignore_attributes/1` in the template.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
+
+## Telemetry and LiveDashboard
+
+### Duplicate `:telemetry.attach/4` ids return `{:error, :already_exists}`
+
+**What happens.** Attaching a Winam ferry handler under the same handler id a
+second time returns `{:error, :already_exists}`. It does not raise. A later
+`:telemetry.detach/1` after a successful detach returns `{:error, :not_found}`.
+
+**Why it matters.** Retrying attach in `mount/3` looks harmless. The second
+attempt leaves the first handler in place and the board may think attach
+failed when the listener is already live.
+
+**What to do.** Treat `{:error, :already_exists}` as a branch. Detach in
+`terminate/2`. Do not assume attach always returns `:ok`.
+
+**Seen in:** [Kisumu Winam metrics](features/23-telemetry-and-livedashboard/01-kisumu-winam-metrics/).
+
+### A raising telemetry handler is auto-detached
+
+**What happens.** A Kibo handler attached with `attach_many/4` raises on the
+summit event. Telemetry detaches that handler id from every event in the
+list. Later ascent and descent emits are silent. A follow-up `detach/1`
+returns `{:error, :not_found}`.
+
+**Why it matters.** One bad clause for one event removes the whole
+`attach_many` subscription. The board looks quiet with no compile error.
+
+**What to do.** Keep handlers total and side-effect only. Rescue inside the
+handler if you must stay attached. Confirm detach results in tests.
+
+**Seen in:** [Kilimanjaro Kibo cycle](features/23-telemetry-and-livedashboard/04-kilimanjaro-kibo-cycle/).
+
+### `:telemetry.span/3` exception events replace stop
+
+**What happens.** An unstable Copperbelt load raises inside the span
+function. Handlers see `EventPrefix ++ [start]` then
+`EventPrefix ++ [exception]` with `:kind`, `:reason`, and `:stacktrace`.
+No stop event fires for that span. Telemetry re-raises after emitting
+exception so an outer `rescue` can still map the failure.
+
+**Why it matters.** Counting stop events under-counts failed work. Pairing
+start to stop by `telemetry_span_context` misses exceptions entirely.
+
+**What to do.** Attach to start, stop, and exception. Match contexts across
+the three. Treat exception as the terminal event for that span.
+
+**Seen in:** [Lusaka Copperbelt span](features/23-telemetry-and-livedashboard/06-lusaka-copperbelt-span/).
+
+### LiveView mount telemetry fires twice under `live/2`
+
+**What happens.** Attaching to `[:phoenix, :live_view, :mount, :start]` and
+running `live/2` for the Toamasina board yields two start events and two
+stop events: the disconnected mount, then the connected mount.
+
+**Why it matters.** A test that expects one mount span flakes or under-counts.
+Production traffic that only hits the connected path still differs from
+LiveViewTest.
+
+**What to do.** Assert a count of two under `live/2`, or filter on
+`connected?(socket)` metadata if you need a single path.
+
+**Seen in:** [Toamasina vanilla gauge](features/23-telemetry-and-livedashboard/11-toamasina-vanilla-gauge/).
+
+### LiveDashboard `init/1` receives `[]` from `additional_pages`
+
+**What happens.** `additional_pages: [piton_tickets: PageModule]` calls
+`init([])`. A clause `init(tickets) when is_list(tickets)` treated that
+empty list as an empty ticket board. `menu_link/2` returned
+`{:disabled, _}` and `live/2` on `/dev/dashboard/piton_tickets` redirected
+to `/dev/dashboard/home`.
+
+**Why it matters.** The custom page looks registered in the router and still
+never opens. Empty-list opts are not domain data.
+
+**What to do.** Read `Keyword.get(opts, :tickets, defaults)` in `init/1`.
+Do not pattern-match a bare list as your session payload.
+
+**Seen in:** [Réunion Piton tickets](features/23-telemetry-and-livedashboard/12-reunion-piton-tickets/).
