@@ -26,8 +26,7 @@ defmodule PhoenixMultivitaminWeb.ArequipaMistiScopeLive do
     ~H"""
     <Layouts.catalog flash={@flash}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 02 · Arequipa Misti scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 02 · Arequipa Misti scope
       </p>
 
       <h1>Arequipa Misti scope</h1>

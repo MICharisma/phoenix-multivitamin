@@ -93,8 +93,7 @@ defmodule PhoenixMultivitaminWeb.CartagenaWalledScopeLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 13 · Cartagena walled scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 13 · Cartagena walled scope
       </p>
 
       <h1>Cartagena walled scope</h1>

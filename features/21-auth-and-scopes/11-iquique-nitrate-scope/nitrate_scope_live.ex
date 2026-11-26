@@ -90,8 +90,7 @@ defmodule PhoenixMultivitaminWeb.IquiqueNitrateScopeLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 11 · Iquique nitrate scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 11 · Iquique nitrate scope
       </p>
 
       <h1>Iquique nitrate scope</h1>

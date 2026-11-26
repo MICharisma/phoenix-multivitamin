@@ -29,8 +29,7 @@ defmodule PhoenixMultivitaminWeb.CordobaMezquitaScopeLive do
     ~H"""
     <Layouts.app flash={@flash} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 01 · Córdoba Mezquita scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 01 · Córdoba Mezquita scope
       </p>
 
       <h1>Córdoba Mezquita scope</h1>

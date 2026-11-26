@@ -655,3 +655,109 @@ and the client opcode are not spelled the same.
 `JS.ignore_attributes/1` in the template.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
+
+## Auth and scopes
+
+### `on_mount` `{:halt, redirect(...)}` makes `live/2` return `{:error, {:redirect, ...}}`
+
+**What happens.** Asunción's `ParaguayAuth.on_mount(:require, ...)` returns
+`{:halt, redirect(socket, to: "/")}`. A ConnCase `live(conn, path)` without
+a session token does not raise. It returns
+`{:error, {:redirect, %{to: "/"}}}`.
+
+**Why it matters.** A test that pattern-matches `{:ok, view, html}` fails
+with a MatchError and hides the redirect. The guide's "halt the mount"
+looks like a hard stop; LiveViewTest surfaces it as a tagged error tuple.
+
+**What to do.** Assert `{:error, {:redirect, %{to: expected}}}` for the
+unauthenticated path. Do not wrap `live/2` in `assert_raise`.
+
+**Seen in:** [Asunción Paraguay scope](features/21-auth-and-scopes/06-asuncion-paraguay-scope/),
+[Montevideo Rambla scope](features/21-auth-and-scopes/07-montevideo-rambla-scope/).
+
+### An assign_scope plug sets `:current_scope` to `nil`, it does not omit the key
+
+**What happens.** Arequipa's `MistiAssignScope.call/2` with an empty
+session assigns `current_scope: nil`. `conn.assigns.current_scope == nil`
+is true. The key is present.
+
+**Why it matters.** `Map.get(assigns, :current_scope)` and
+`assigns[:current_scope]` both return `nil`, so you cannot tell "guest"
+from "plug never ran" with a bare nil check. Templates that do
+`@current_scope.clerk` crash on the guest path.
+
+**What to do.** Match on `%Scope{}` versus `nil` before reading fields.
+In LiveView, render a locked board when the assign is nil.
+
+**Seen in:** [Arequipa Misti scope](features/21-auth-and-scopes/02-arequipa-misti-scope/).
+
+### A magic-link token becomes `:current_scope`, not `:current_user`
+
+**What happens.** Valdivia's fog link mints a token and redeems it into a
+`%LosRiosScope{}`. The LiveView assigns `:current_scope`. The rendered
+assign-key list contains `current_scope` and never `current_user`.
+
+**Why it matters.** Older auth examples put the user struct on the
+socket. Phoenix 1.8 scopes put a Scope there. Code that reaches for
+`@current_user` after a gen.auth-style login finds nothing.
+
+**What to do.** Pass `@current_scope` into contexts. Put clerk or station
+fields on the scope struct, not on a parallel user assign.
+
+**Seen in:** [Valdivia Los Ríos scope](features/21-auth-and-scopes/09-valdivia-los-rios-scope/).
+
+### Sudo checks the clock on the scope, not "is signed in"
+
+**What happens.** Concepción stores `biobio_authenticated_at` as an
+ISO8601 string in the session. Mount rebuilds `%BiobioScope{authenticated_at: dt}`.
+`BiobioSudo.sudo_valid?/1` uses `DateTime.diff/3`. A session that is still
+signed in but older than the window fails `unlock_master_plates` until
+`renew_session` writes a fresh timestamp.
+
+**Why it matters.** "Require authenticated" and "require sudo" are
+different gates. A long-lived session token alone does not satisfy
+settings that need a recent credential check.
+
+**What to do.** Keep `authenticated_at` on the scope. Re-check the window
+on sensitive events. Renew by writing a new timestamp into the session
+(or re-assigning the scope), not by toggling a boolean.
+
+**Seen in:** [Concepción Biobío scope](features/21-auth-and-scopes/10-concepcion-biobio-scope/).
+
+### A scoped logout broadcast reaches every LiveView on that station topic
+
+**What happens.** Iquique's topic is `"iquique:IQQ:nitrate"`. The LiveView
+subscribes on connected mount. An external
+`NitrateBoards.broadcast_logout(scope)` delivers `{:nitrate_logout, "IQQ"}`
+to that process. `handle_info/2` clears the board. A second station's
+topic does not receive the message.
+
+**Why it matters.** Broadcasting `"logout"` on a global topic signs
+everyone out. Scoping the topic to the station keeps Valentina's hangar
+from kicking a clerk on another field.
+
+**What to do.** Subscribe and broadcast on `"app:#{scope.station_id}:…"`.
+Handle `{:…_logout, station_id}` by clearing `:current_scope` (or
+redirecting), and ignore foreign station ids.
+
+**Seen in:** [Iquique nitrate scope](features/21-auth-and-scopes/11-iquique-nitrate-scope/),
+[Cartagena walled scope](features/21-auth-and-scopes/13-cartagena-walled-scope/).
+
+### `:mount_current_scope` continues with nil; `:require_authenticated` redirects
+
+**What happens.** Montevideo's `RamblaAuth.on_mount(:mount_current_scope, …)`
+always returns `{:cont, socket}` and may leave `current_scope` as `nil`.
+The same module's `:require_authenticated` clause redirects when the
+scope is nil. Calling the mount hook alone never redirects.
+
+**Why it matters.** gen.auth exposes both hooks. Putting only
+`:mount_current_scope` on a live_session leaves the page public. A
+settings LiveView that forgets `:require_authenticated` renders with a
+nil scope instead of bouncing to the login.
+
+**What to do.** Use `:mount_current_scope` for public-or-private pages.
+Stack or swap to `:require_authenticated` for desks that must have a
+scope. Assert both shapes in tests.
+
+**Seen in:** [Montevideo Rambla scope](features/21-auth-and-scopes/07-montevideo-rambla-scope/),
+[Córdoba Sierras scope](features/21-auth-and-scopes/08-cordoba-ar-sierras-scope/).

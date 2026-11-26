@@ -23,14 +23,14 @@ defmodule PhoenixMultivitaminWeb.MontevideoRamblaScopeLive do
     ~H"""
     <Layouts.app flash={@flash} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 07 · Montevideo Rambla scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 07 · Montevideo Rambla scope
       </p>
 
       <h1>Montevideo Rambla scope</h1>
       <p class="lede">
         Clerk {@clerk} keeps the Carrasco (MVD) Rambla coastal METAR desk.
-        <code>require_authenticated</code> builds on <code>mount_current_scope</code>.
+        <code>require_authenticated</code>
+        builds on <code>mount_current_scope</code>.
       </p>
 
       <.scenario_identity clerk={@clerk} craft={@craft} />

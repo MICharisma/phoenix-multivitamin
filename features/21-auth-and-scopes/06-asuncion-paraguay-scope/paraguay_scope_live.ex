@@ -25,8 +25,7 @@ defmodule PhoenixMultivitaminWeb.AsuncionParaguayScopeLive do
     ~H"""
     <Layouts.catalog flash={@flash}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 06 · Asunción Paraguay scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 06 · Asunción Paraguay scope
       </p>
 
       <h1>Asunción Paraguay scope</h1>

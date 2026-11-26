@@ -29,8 +29,7 @@ defmodule PhoenixMultivitaminWeb.SantaCruzOrienteScopeLive do
     ~H"""
     <Layouts.app flash={@flash} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 05 · Santa Cruz oriente scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 05 · Santa Cruz oriente scope
       </p>
 
       <h1>Santa Cruz oriente scope</h1>

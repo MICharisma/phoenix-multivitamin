@@ -52,8 +52,7 @@ defmodule PhoenixMultivitaminWeb.ValdiviaLosRiosScopeLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 09 · Valdivia Los Ríos scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 09 · Valdivia Los Ríos scope
       </p>
 
       <h1>Valdivia Los Ríos scope</h1>

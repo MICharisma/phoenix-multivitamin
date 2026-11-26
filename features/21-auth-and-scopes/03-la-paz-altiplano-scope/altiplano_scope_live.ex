@@ -35,8 +35,7 @@ defmodule PhoenixMultivitaminWeb.LaPazAltiplanoScopeLive do
     ~H"""
     <Layouts.app flash={@flash} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 03 · La Paz altiplano scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 03 · La Paz altiplano scope
       </p>
 
       <h1>La Paz altiplano scope</h1>

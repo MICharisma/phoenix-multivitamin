@@ -31,7 +31,12 @@ defmodule PhoenixMultivitaminWeb.MontevideoRamblaScopeLiveTest do
     socket = %Phoenix.LiveView.Socket{}
 
     assert {:cont, mounted} =
-             RamblaAuth.on_mount(:mount_current_scope, %{}, %{"rambla_token" => "sofia-mvd"}, socket)
+             RamblaAuth.on_mount(
+               :mount_current_scope,
+               %{},
+               %{"rambla_token" => "sofia-mvd"},
+               socket
+             )
 
     assert %RamblaScope{clerk: "Sofía", station: "MVD"} = mounted.assigns.current_scope
 

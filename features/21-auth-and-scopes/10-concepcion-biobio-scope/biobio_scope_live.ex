@@ -75,14 +75,12 @@ defmodule PhoenixMultivitaminWeb.ConcepcionBiobioScopeLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 10 · Concepción Biobío scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 10 · Concepción Biobío scope
       </p>
 
       <h1>Concepción Biobío scope</h1>
       <p class="lede">
-        Clerk {@clerk} unlocks the Carriel Sur (CCP) master plate drawer for
-        {@craft} approaches. Sudo needs a fresh <code>authenticated_at</code>.
+        Clerk {@clerk} unlocks the Carriel Sur (CCP) master plate drawer for {@craft} approaches. Sudo needs a fresh <code>authenticated_at</code>.
       </p>
 
       <.scenario_identity clerk={@clerk} craft={@craft} />
@@ -96,7 +94,9 @@ defmodule PhoenixMultivitaminWeb.ConcepcionBiobioScopeLive do
           <dt>Authenticated at</dt>
           <dd id="authenticated-at">{DateTime.to_iso8601(@current_scope.authenticated_at)}</dd>
           <dt>Sudo</dt>
-          <dd id="sudo-state">{if BiobioSudo.sudo_valid?(@current_scope), do: "valid", else: "stale"}</dd>
+          <dd id="sudo-state">
+            {if BiobioSudo.sudo_valid?(@current_scope), do: "valid", else: "stale"}
+          </dd>
         </dl>
 
         <div id="plate-actions">

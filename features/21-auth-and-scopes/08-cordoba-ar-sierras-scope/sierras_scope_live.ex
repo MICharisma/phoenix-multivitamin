@@ -31,7 +31,11 @@ defmodule PhoenixMultivitaminWeb.CordobaSierrasScopeLive do
   end
 
   @impl true
-  def handle_event("open_charter_desk", _params, %{assigns: %{current_scope: %SierrasScope{}}} = socket) do
+  def handle_event(
+        "open_charter_desk",
+        _params,
+        %{assigns: %{current_scope: %SierrasScope{}}} = socket
+      ) do
     {:noreply,
      socket
      |> assign(:charter_desk, :open)
@@ -51,8 +55,7 @@ defmodule PhoenixMultivitaminWeb.CordobaSierrasScopeLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} variant={:catalog}>
       <p class="breadcrumbs">
-        <.link navigate={~p"/"}>Catalog</.link>
-        · Auth and scopes · 08 · Córdoba Sierras scope
+        <.link navigate={~p"/"}>Catalog</.link> · Auth and scopes · 08 · Córdoba Sierras scope
       </p>
 
       <h1>Córdoba Sierras scope</h1>

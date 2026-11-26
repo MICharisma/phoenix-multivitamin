@@ -13,7 +13,7 @@ and
 | Servings per feature | 13 |
 | Features | 25 |
 | Scenarios | 325 |
-| Bottled | 182 of 325 |
+| Bottled | 195 of 325 |
 | Active ingredient | Phoenix 1.8.15 |
 | LiveView | 1.2 |
 | Database | SQLite (`ecto_sqlite3`) |
@@ -34,7 +34,7 @@ so you can see the same feature applied in thirteen different shapes.
 Every scenario uses real, domain-meaningful names. You will not find
 placeholder names here.
 
-The bottle is just opening: 25 features, 13 scenarios each, 182 of 325 bottled.
+The bottle is just opening: 25 features, 13 scenarios each, 195 of 325 bottled.
 The reference scenario that later ones copy is
 [LiveView lifecycle and events · 01 · Akureyri night watch](features/06-liveview-lifecycle-and-events/01-akureyri-night-watch/).
 
@@ -112,7 +112,7 @@ the story.
 18. [Ecto schemas and changesets](features/18-ecto-schemas-and-changesets/) — 0 of 13 bottled
 19. [Ecto queries and contexts](features/19-ecto-queries-and-contexts/) — 0 of 13 bottled
 20. [Ecto migrations and multis](features/20-ecto-migrations-and-multis/) — 0 of 13 bottled
-21. [Auth and scopes](features/21-auth-and-scopes/) — 0 of 13 bottled
+21. [Auth and scopes](features/21-auth-and-scopes/) — 13 of 13 bottled
 22. [Mailers with Swoosh](features/22-mailers-with-swoosh/) — 0 of 13 bottled
 23. [Telemetry and LiveDashboard](features/23-telemetry-and-livedashboard/) — 0 of 13 bottled
 24. [Gettext translations](features/24-gettext-translations/) — 0 of 13 bottled
