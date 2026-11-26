@@ -10,10 +10,10 @@ defmodule PhoenixMultivitamin.CatalogTest do
     assert Catalog.slot_count() == 325
     assert length(features) == 25
     assert Enum.all?(features, &(length(&1.slots) == 13))
-    assert Catalog.bottled_count() == 182
+    assert Catalog.bottled_count() == 195
 
     bottled = Catalog.bottled_slots()
-    assert length(bottled) == 182
+    assert length(bottled) == 195
     assert Enum.all?(bottled, & &1.bottled)
     assert Enum.all?(bottled, &is_atom(&1.live_module))
     assert Enum.all?(bottled, &String.starts_with?(&1.path, "/features/"))
