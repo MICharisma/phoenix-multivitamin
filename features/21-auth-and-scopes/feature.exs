@@ -52,37 +52,43 @@
       number: 8,
       slug: "08-cordoba-ar-sierras-scope",
       title: "Córdoba Sierras scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CordobaSierrasScopeLive
     },
     %{
       number: 9,
       slug: "09-valdivia-los-rios-scope",
       title: "Valdivia Los Ríos scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ValdiviaLosRiosScopeLive
     },
     %{
       number: 10,
       slug: "10-concepcion-biobio-scope",
       title: "Concepción Biobío scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ConcepcionBiobioScopeLive
     },
     %{
       number: 11,
       slug: "11-iquique-nitrate-scope",
       title: "Iquique nitrate scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.IquiqueNitrateScopeLive
     },
     %{
       number: 12,
       slug: "12-arica-morro-scope",
       title: "Arica Morro scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AricaMorroScopeLive
     },
     %{
       number: 13,
       slug: "13-cartagena-walled-scope",
       title: "Cartagena walled scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CartagenaWalledScopeLive
     }
   ]
 }
