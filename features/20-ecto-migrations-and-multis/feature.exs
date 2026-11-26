@@ -10,79 +10,92 @@
       number: 1,
       slug: "01-granada-sierra-nevada-migration",
       title: "Granada Sierra Nevada migration",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.GranadaSierraNevadaMigrationLive
     },
     %{
       number: 2,
       slug: "02-beja-alentejo-migration",
       title: "Beja Alentejo migration",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.BejaAlentejoMigrationLive
     },
     %{
       number: 3,
       slug: "03-vigo-rias-baixas-migration",
       title: "Vigo Rías Baixas migration",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.VigoRiasBaixasMigrationLive
     },
     %{
       number: 4,
       slug: "04-santiago-compostela-vault",
       title: "Santiago Compostela vault",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SantiagoCompostelaVaultLive
     },
     %{
       number: 5,
-      slug: "05-a-coruna-tower-of-hercules",
+      slug: "05-a-coruna-hercules-cabinet",
       title: "A Coruña Hercules cabinet",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ACorunaHerculesCabinetLive
     },
     %{
       number: 6,
       slug: "06-asturias-picos-migration",
       title: "Asturias Picos migration",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AsturiasPicosMigrationLive
     },
     %{
       number: 7,
       slug: "07-santander-cantabria-multi",
       title: "Santander Cantabria multi",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SantanderCantabriaMultiLive
     },
     %{
       number: 8,
       slug: "08-pamplona-san-fermin-multi",
       title: "Pamplona San Fermín multi",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.PamplonaSanFerminMultiLive
     },
     %{
       number: 9,
       slug: "09-zaragoza-ebro-multi",
       title: "Zaragoza Ebro multi",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ZaragozaEbroMultiLive
     },
     %{
       number: 10,
       slug: "10-salamanca-plaza-mayor-multi",
       title: "Salamanca Plaza Mayor multi",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SalamancaPlazaMayorMultiLive
     },
     %{
       number: 11,
       slug: "11-leon-camino-multi",
       title: "León Camino multi",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LeonCaminoMultiLive
     },
     %{
       number: 12,
       slug: "12-vitoria-basque-multi",
       title: "Vitoria Basque multi",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.VitoriaBasqueMultiLive
     },
     %{
       number: 13,
       slug: "13-logrono-rioja-handover",
       title: "Logroño Rioja handover",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LogronoRiojaHandoverLive
     }
   ]
 }
