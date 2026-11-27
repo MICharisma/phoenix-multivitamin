@@ -369,7 +369,12 @@ defmodule PhoenixMultivitaminWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: PhoenixMultivitaminWeb.Telemetry
+      live_dashboard "/dashboard",
+        metrics: PhoenixMultivitaminWeb.Telemetry,
+        additional_pages: [
+          piton_tickets: PhoenixMultivitaminWeb.ReunionPitonTicketsPage
+        ]
+
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
