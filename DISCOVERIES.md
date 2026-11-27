@@ -830,3 +830,69 @@ at `conn.status` never see 410 or 403.
 `%{"status" => 410, "token" => _}` or `%{"status" => 403}`.
 
 **Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+## Ecto schemas and changesets
+
+### A virtual field survives Repo.insert and is nil after Repo.get
+
+**What happens.** `LusakaHoldCard.changeset/2` puts `remaining_min` with
+`put_change/3`. `Repo.insert/1` returns a struct whose `remaining_min` is
+`17`. `Repo.get!(LusakaHoldCard, id).remaining_min` is `nil`. The column
+was never in the migration.
+
+**Why it matters.** Code that treats the insert return and a later load as
+the same shape will read a hold that looks full after reload. The virtual
+value lived only in memory on that struct.
+
+**What to do.** Recompute virtual fields after load, or store them if the
+page must show them later. Do not expect `Repo.get/2` to keep `virtual: true`.
+
+**Seen in:** [Lusaka hold remaining](features/18-ecto-schemas-and-changesets/05-lusaka-hold-remaining/).
+
+### unique_constraint/3 stays silent during validate
+
+**What happens.** The first `MDG441` insert succeeds. A `phx-change` of the
+same callsign after that write does not show `"has already been taken"`.
+Only a second `Repo.insert/1` against the unique index adds the error.
+`changeset.valid?` is still true on validate for a callsign that already
+exists.
+
+**Why it matters.** Live validation looks like it checked uniqueness. It
+did not. The desk can look clear until submit races the index.
+
+**What to do.** Treat uniqueness as a write-time check. Show the constraint
+error from the failed insert, or query explicitly if the form must warn
+earlier.
+
+**Seen in:** [Antananarivo designator](features/18-ecto-schemas-and-changesets/10-antananarivo-designator/).
+
+### prepare_changes/2 does not run on an invalid changeset
+
+**What happens.** A Mauritius ticket with `litres: 0` and
+`unit_hint: "us_gallon"` fails `validate_number`. `prepare_changes` never
+converts the gallons. No row is written. A valid `1000` US gallon ticket
+inserts as `3785` litres.
+
+**Why it matters.** A prepare hook looks like it always normalizes before
+the write. Invalid cards skip it entirely, so side effects inside prepare
+do not fire on failed validation.
+
+**What to do.** Keep prepare_changes for write-time normalization of valid
+data. Do not rely on it to run during validate or on invalid cards.
+
+**Seen in:** [Mauritius fuel prepare](features/18-ecto-schemas-and-changesets/11-mauritius-fuel-prepare/).
+
+### redact: true omits the field from inspect as trailing `...`
+
+**What happens.** `field :access_token, :string, redact: true` stores
+`"run-hangar-88"` on the struct. `inspect(card)` does not contain that
+string and does not print `**redacted**`. The token is folded into the
+trailing `...` of the `#Schema<...>` inspect form.
+
+**Why it matters.** Tests or logs that grep for `**redacted**` miss the
+actual redact behavior on current Ecto. The secret is hidden; the marker
+string is not.
+
+**What to do.** Assert the secret is absent from `inspect/1`, not that a
+literal `**redacted**` appears.
+
+**Seen in:** [Réunion credential card](features/18-ecto-schemas-and-changesets/13-reunion-credential-card/).
