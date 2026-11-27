@@ -656,6 +656,281 @@ and the client opcode are not spelled the same.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
 
+## PubSub
+
+### Without `handle_info/2`, a message a hook passes on is dropped
+
+**What happens.** The Salalah apron LiveView defines no `handle_info/2`.
+Following runway calls attaches a `:handle_info` hook that halts on
+`{:runway_call, runway, condition}` and returns `{:cont, socket}` for
+anything else. A `{:tide_table, "Raysut", "High water 14:20"}` message
+reaches the hook, continues, and disappears. The LiveView keeps running
+and the next runway call still lands.
+
+**Why it matters.** A LiveView that defines even one `handle_info/2`
+clause crashes on a message no clause matches. Moving that work into a
+hook and deleting the callback turns the crash into a silent drop. A
+broadcast with a misspelled shape then looks like a broadcast that never
+arrived.
+
+**What to do.** Keep a catch-all clause in the hook if you need to see
+strays, or define `handle_info/2` with an explicit fallback. Do not rely
+on a crash to report an unexpected broadcast.
+
+**Seen in:** [Salalah monsoon call](features/15-pubsub/06-salalah-monsoon-call/).
+
+### `direct_broadcast/4` to your own node arrives after the call returns
+
+**What happens.** With the PG2 adapter, `direct_broadcast/4` sends the
+message to the adapter worker registered as
+`PhoenixMultivitamin.PubSub.Adapter`, which then dispatches it locally.
+With that worker suspended, `direct_broadcast(node(), ...)` returns `:ok`
+and nothing has been delivered, while `local_broadcast/3` in the same test
+has already delivered. The held message arrives once the worker resumes.
+A direct broadcast to `:"riyadh-acc@hijaz"`, a node that is not
+connected, also returns `:ok` and delivers nothing.
+
+**Why it matters.** `local_broadcast/3` and `broadcast/3` deliver to local
+subscribers before they return. A test that asserts right after a
+`direct_broadcast/4` can pass or fail by timing. An `:ok` from a direct
+broadcast does not mean the node exists.
+
+**What to do.** Use `local_broadcast/3` for this node. In tests of a
+direct broadcast, `assert_receive` or call `:sys.get_state/1` on the
+adapter worker before asserting. Check `Node.list/0` if delivery to a
+named node matters.
+
+**Seen in:** [Madinah Hijaz hold wire](features/15-pubsub/11-madinah-hijaz-hold-wire/).
+
+### `Endpoint.broadcast/3` needs a string event and does not encode the payload
+
+**What happens.** `Endpoint.broadcast!(topic, "ring", %{gate: "C12",
+rung_by: "Maryam"})` reaches a LiveView subscriber as
+`%Phoenix.Socket.Broadcast{topic: topic, event: "ring", payload: %{gate:
+"C12", rung_by: "Maryam"}}`. The payload's atom keys stay atoms.
+`Endpoint.broadcast!(topic, :ring, payload)` raises `FunctionClauseError`
+before anything is broadcast.
+
+**Why it matters.** Code that listens to both channels and LiveViews can
+expect JSON-shaped string keys. A LiveView receives the Elixir term it
+was given. Only the typespec says the event is a string; at runtime an
+atom event fails with an error that does not mention the event.
+
+**What to do.** Pass the event as a string, and match the payload with
+the keys the publisher used. Use `Phoenix.PubSub.broadcast/3` with your
+own message shape when no channel needs the `Broadcast` struct.
+
+**Seen in:** [Doha Pearl floor bell](features/15-pubsub/07-doha-pearl-floor-bell/).
+## Presence
+
+### `get_by_key/2` returns `[]` or one fetched presence map, not a list
+
+**What happens.** An absent key returns `[]`. A present key returns the map
+`fetch/2` produced for that key — typically `%{metas: [...]}` and any
+overlays — not a list of those maps. Heraklion's duty-supervisor check
+matches on `%{metas: [%{position: "supervisor"} | _]}`.
+
+**Why it matters.** The hexdocs example shows
+`[%{name: "User 1", metas: [...]}]`. Code that pattern-matches a list of
+presences will fail against Phoenix 1.8 / phoenix_pubsub 2.4: the fetched
+map is returned directly.
+
+**What to do.** Match `[]` for absence and a map with `:metas` for presence.
+Keep overlays on that same map in `fetch/2`.
+
+**Seen in:** [Heraklion Knossos presence](features/16-presence/02-heraklion-knossos-presence/).
+
+### Seeding with `list/1` still delivers your own join as a `presence_diff`
+
+**What happens.** Split Approach calls `Presence.list/1` right after
+`track/4`, then folds later diffs into the roster. The tracker still
+broadcasts a join for that same meta. Without de-duplicating by `phx_ref`,
+the controller appears twice.
+
+**Why it matters.** "List once, then apply diffs" looks complete after the
+list. The subscribe that made the list useful also delivers the join that
+built it.
+
+**What to do.** De-duplicate joins by `phx_ref` when merging into a roster
+you already seeded from `list/1`, or skip the list and build only from diffs.
+
+**Seen in:** [Split Diocletian watch](features/16-presence/05-split-diocletian-watch/).
+
+### A killed tracked process leaves no Presence ghost
+
+**What happens.** The tracker links every tracked pid. Killing a crew tablet
+produces a leave diff and `get_by_key/2` returns `[]`. Turku's board still
+shows the crew member under radio silence because the LiveView keeps its own
+short-lived ghost with `Process.send_after/3`.
+
+**Why it matters.** "Ghost presence" is a product concern, not a Presence
+leak. Presence has already removed the key; any lingering UI is yours to
+schedule and cancel.
+
+**What to do.** Treat Presence leaves as authoritative. Keep application
+ghosts in the LiveView (or another process) with an explicit timeout.
+
+**Seen in:** [Turku archipelago crew](features/16-presence/12-turku-archipelago-crew/).
+## Channels
+
+### `push`, `reply`, and `broadcast` cannot run inside `join/3`
+
+**What happens.** A Kotor radio-room `join/3` that calls
+`broadcast_from!(socket, "operator_on", ...)` raises
+`RuntimeError: push/3, reply/2, and broadcast/3 can only be called after
+the socket has finished joining.` ChannelTest then sees
+`{:error, %{reason: "join crashed"}}`.
+
+**Why it matters.** Announcing a join to the rest of the topic looks like
+it belongs in `join/3`. The socket is not marked joined until `join/3`
+returns.
+
+**What to do.** `send(self(), :after_join)` from `join/3` and broadcast
+from `handle_info(:after_join, socket)`. Put the join reply map in the
+`{:ok, reply, socket}` return value instead of pushing it.
+
+**Seen in:** [Kotor bay radio room](features/17-channels/09-kotor-bay-radio-room/),
+[Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+
+### `auth_token: true` must be a top-level `socket/3` option
+
+**What happens.** Declaring
+`websocket: [auth_token: true, connect_info: [:auth_token, :user_agent]]`
+(and the same under `longpoll:`) still leaves the transport's
+`:auth_token` option `nil`. `Endpoint.socket/3` copies the *top-level*
+`:auth_token` onto each transport with `Keyword.put/3`. When that
+top-level key is missing, the copy writes `nil` and overwrites the
+nested `true`. LongPoll then never reads `x-phoenix-authtoken`,
+`connect_info.auth_token` is `nil`, and a signed watch returns JSON
+`{"status": 403}`.
+
+**Why it matters.** Nesting `auth_token: true` next to `connect_info`
+looks complete. The header is ignored and every longpoll session is
+forbidden.
+
+**What to do.** Set `auth_token: true` on the `socket/3` options
+themselves. `load_config/2` then adds `:auth_token` to `connect_info`
+automatically; list `:user_agent` (and any other keys) under
+`websocket:` / `longpoll:`.
+
+**Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+
+### LongPoll always answers HTTP 200; the transport status is in the JSON body
+
+**What happens.** A successful new LongPoll session returns HTTP 200 with
+`{"status": 410, "token": ...}`. A refused connect returns HTTP 200 with
+`{"status": 403}`. `json_response(conn, 410)` raises even when the
+transport status is Gone.
+
+**Why it matters.** Asserting the Plug status for Gone or Forbidden
+misses the body LongPoll actually uses. Clients and tests that only look
+at `conn.status` never see 410 or 403.
+
+**What to do.** Assert `json_response(conn, 200)` and match
+`%{"status" => 410, "token" => _}` or `%{"status" => 403}`.
+
+**Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+## Ecto schemas and changesets
+
+### A virtual field survives Repo.insert and is nil after Repo.get
+
+**What happens.** `LusakaHoldCard.changeset/2` puts `remaining_min` with
+`put_change/3`. `Repo.insert/1` returns a struct whose `remaining_min` is
+`17`. `Repo.get!(LusakaHoldCard, id).remaining_min` is `nil`. The column
+was never in the migration.
+
+**Why it matters.** Code that treats the insert return and a later load as
+the same shape will read a hold that looks full after reload. The virtual
+value lived only in memory on that struct.
+
+**What to do.** Recompute virtual fields after load, or store them if the
+page must show them later. Do not expect `Repo.get/2` to keep `virtual: true`.
+
+**Seen in:** [Lusaka hold remaining](features/18-ecto-schemas-and-changesets/05-lusaka-hold-remaining/).
+
+### unique_constraint/3 stays silent during validate
+
+**What happens.** The first `MDG441` insert succeeds. A `phx-change` of the
+same callsign after that write does not show `"has already been taken"`.
+Only a second `Repo.insert/1` against the unique index adds the error.
+`changeset.valid?` is still true on validate for a callsign that already
+exists.
+
+**Why it matters.** Live validation looks like it checked uniqueness. It
+did not. The desk can look clear until submit races the index.
+
+**What to do.** Treat uniqueness as a write-time check. Show the constraint
+error from the failed insert, or query explicitly if the form must warn
+earlier.
+
+**Seen in:** [Antananarivo designator](features/18-ecto-schemas-and-changesets/10-antananarivo-designator/).
+
+### prepare_changes/2 does not run on an invalid changeset
+
+**What happens.** A Mauritius ticket with `litres: 0` and
+`unit_hint: "us_gallon"` fails `validate_number`. `prepare_changes` never
+converts the gallons. No row is written. A valid `1000` US gallon ticket
+inserts as `3785` litres.
+
+**Why it matters.** A prepare hook looks like it always normalizes before
+the write. Invalid cards skip it entirely, so side effects inside prepare
+do not fire on failed validation.
+
+**What to do.** Keep prepare_changes for write-time normalization of valid
+data. Do not rely on it to run during validate or on invalid cards.
+
+**Seen in:** [Mauritius fuel prepare](features/18-ecto-schemas-and-changesets/11-mauritius-fuel-prepare/).
+
+### redact: true omits the field from inspect as trailing `...`
+
+**What happens.** `field :access_token, :string, redact: true` stores
+`"run-hangar-88"` on the struct. `inspect(card)` does not contain that
+string and does not print `**redacted**`. The token is folded into the
+trailing `...` of the `#Schema<...>` inspect form.
+
+**Why it matters.** Tests or logs that grep for `**redacted**` miss the
+actual redact behavior on current Ecto. The secret is hidden; the marker
+string is not.
+
+**What to do.** Assert the secret is absent from `inspect/1`, not that a
+literal `**redacted**` appears.
+
+**Seen in:** [Réunion credential card](features/18-ecto-schemas-and-changesets/13-reunion-credential-card/).
+## Ecto queries and contexts
+
+### `Repo.stream/2` returns a stream; the raise waits until you reduce it
+
+**What happens.** Outside a transaction, `Repo.stream/2` still returns a
+`%Stream{}`. The error does not fire at the call site. Reducing that
+stream with `Enum.reduce/3` raises `RuntimeError` with
+`"cannot reduce stream outside of transaction"`. The wording is
+"cannot reduce stream", not "cannot be invoked".
+
+**Why it matters.** A context that "opens" a stream and hands it to the
+caller looks fine in the debugger. The crash lands later, in whoever
+consumes the stream, and a regex written from the guides' "must be run
+inside a transaction" phrase will miss the real message.
+
+**What to do.** Wrap the stream and its consumption in
+`Repo.transaction/2`. Assert on `"cannot reduce stream outside of
+transaction"` when testing the failure path.
+
+**Seen in:** [Buenos Aires ledger stream](features/19-ecto-queries-and-contexts/12-buenos-aires-ledger-stream/).
+
+### `Repo.aggregate(:count)` on an empty filtered query returns `0`, not `nil`
+
+**What happens.** `where(occupied == true) |> Repo.aggregate(:count)` on
+an empty apron returns `0`. The LiveView can assign that integer
+directly. `:avg` on an empty set is the one that returns `nil`.
+
+**Why it matters.** Treating a missing aggregate as "no value" and
+writing `count || 0` is harmless for `:count` and wrong for `:avg`.
+The empty and zero cases look the same for counts.
+
+**What to do.** For `:count`, assert `0` on an empty table. For `:avg`,
+handle `nil` separately.
+
+**Seen in:** [Auckland apron count](features/19-ecto-queries-and-contexts/11-auckland-apron-count/).
 ## Ecto migrations and multis
 
 ### SQLite foreign key errors arrive with a nil constraint name

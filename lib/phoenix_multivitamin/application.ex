@@ -15,6 +15,7 @@ defmodule PhoenixMultivitamin.Application do
       {DNSCluster,
        query: Application.get_env(:phoenix_multivitamin, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PhoenixMultivitamin.PubSub},
+      PhoenixMultivitaminWeb.PresenceTrackers,
       # Start a worker by calling: PhoenixMultivitamin.Worker.start_link(arg)
       # {PhoenixMultivitamin.Worker, arg},
       # Start to serve requests, typically the last entry
