@@ -1,0 +1,11 @@
+msgid ""
+msgstr ""
+"Language: ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "1 free stand"
+msgid_plural "%{count} free stands"
+msgstr[0] "%{count} свободное место"
+msgstr[1] "%{count} свободных места"
+msgstr[2] "%{count} свободных мест"

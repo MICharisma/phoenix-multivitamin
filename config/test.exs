@@ -37,6 +37,9 @@ config :phoenix_live_view,
 config :phoenix,
   sort_verified_routes_query_params: true
 
+# Exercise LiveDashboard additional_pages under mix test
+config :phoenix_multivitamin, dev_routes: true
+
 # Auckland log vault (feature 25) swaps the METAR client without Mox.
 config :phoenix_multivitamin,
        :auckland_metar_client,

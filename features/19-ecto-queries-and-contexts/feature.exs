@@ -8,81 +8,94 @@
   slots: [
     %{
       number: 1,
-      slug: "01-strasbourg-rhine-context",
-      title: "Strasbourg Rhine context",
-      bottled: false
+      slug: "01-reykjavik-crew-board",
+      title: "Reykjavik crew board",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ReykjavikCrewBoardLive
     },
     %{
       number: 2,
-      slug: "02-mulhouse-euroairport-query",
-      title: "Mulhouse EuroAirport query",
-      bottled: false
+      slug: "02-dubai-cargo-holds",
+      title: "Dubai cargo holds",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.DubaiCargoHoldsLive
     },
     %{
       number: 3,
-      slug: "03-samedan-engadin-context",
-      title: "Samedan Engadin context",
-      bottled: false
+      slug: "03-singapore-named-bindings",
+      title: "Singapore named bindings",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SingaporeNamedBindingsLive
     },
     %{
       number: 4,
-      slug: "04-zermatt-heliport-query",
-      title: "Zermatt heliport query",
-      bottled: false
+      slug: "04-johannesburg-bay-filters",
+      title: "Johannesburg bay filters",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.JohannesburgBayFiltersLive
     },
     %{
       number: 5,
-      slug: "05-megeve-altiport-context",
-      title: "Megève altiport context",
-      bottled: false
+      slug: "05-tokyo-join-preload",
+      title: "Tokyo join preload",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.TokyoJoinPreloadLive
     },
     %{
       number: 6,
-      slug: "06-alpe-dhuez-altiport-query",
-      title: "Alpe-d-Huez altiport query",
-      bottled: false
+      slug: "06-santiago-late-preload",
+      title: "Santiago late preload",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SantiagoLatePreloadLive
     },
     %{
       number: 7,
-      slug: "07-chambery-savoie-context",
-      title: "Chambéry Savoie context",
-      bottled: false
+      slug: "07-helsinki-overdue-cards",
+      title: "Helsinki overdue cards",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.HelsinkiOverdueCardsLive
     },
     %{
       number: 8,
-      slug: "08-nice-cote-azur-query",
-      title: "Nice Cote-d-Azur query",
-      bottled: false
+      slug: "08-quito-altitude-tags",
+      title: "Quito altitude tags",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.QuitoAltitudeTagsLive
     },
     %{
       number: 9,
-      slug: "09-monaco-heliport-context",
-      title: "Monaco heliport context",
-      bottled: false
+      slug: "09-nairobi-cargo-totals",
+      title: "Nairobi cargo totals",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.NairobiCargoTotalsLive
     },
     %{
       number: 10,
-      slug: "10-andorra-la-seu-query",
-      title: "Andorra La Seu query",
-      bottled: false
+      slug: "10-lisbon-delay-ranks",
+      title: "Lisbon delay ranks",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LisbonDelayRanksLive
     },
     %{
       number: 11,
-      slug: "11-reus-gaudi-context",
-      title: "Reus Gaudí context",
-      bottled: false
+      slug: "11-auckland-apron-count",
+      title: "Auckland apron count",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AucklandApronCountLive
     },
     %{
       number: 12,
-      slug: "12-jerez-sherry-query",
-      title: "Jerez sherry query",
-      bottled: false
+      slug: "12-buenos-aires-ledger-stream",
+      title: "Buenos Aires ledger stream",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.BuenosAiresLedgerStreamLive
     },
     %{
       number: 13,
-      slug: "13-almeria-tabernas-context",
-      title: "Almería Tabernas context",
-      bottled: false
+      slug: "13-doha-composed-desk",
+      title: "Doha composed desk",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.DohaComposedDeskLive
     }
   ]
 }

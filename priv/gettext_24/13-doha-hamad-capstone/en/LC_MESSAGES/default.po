@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "1 bag on the belt"
+msgid_plural "%{count} bags on the belt"
+msgstr[0] "1 bag on the belt"
+msgstr[1] "%{count} bags on the belt"

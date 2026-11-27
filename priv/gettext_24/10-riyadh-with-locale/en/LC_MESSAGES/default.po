@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Hold short of taxiway Bravo"
+msgstr "Hold short of taxiway Bravo"
+
+msgid "Cleared to land runway 33L"
+msgstr "Cleared to land runway 33L"

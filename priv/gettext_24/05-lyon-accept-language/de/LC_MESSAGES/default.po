@@ -1,0 +1,7 @@
+msgid ""
+msgstr ""
+"Language: de\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ATIS information Alpha available"
+msgstr "ATIS-Information Alpha verfügbar"
