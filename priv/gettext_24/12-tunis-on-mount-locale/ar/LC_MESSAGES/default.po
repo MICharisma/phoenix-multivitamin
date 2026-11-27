@@ -1,0 +1,7 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Pushback approved from stand 14"
+msgstr "تمت الموافقة على الدفع من الموقف 14"

@@ -1,0 +1,11 @@
+msgid ""
+msgstr ""
+"Language: pl\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "1 aircraft on the apron"
+msgid_plural "%{count} aircraft on the apron"
+msgstr[0] "1 samolot na płycie"
+msgstr[1] "%{count} samoloty na płycie"
+msgstr[2] "%{count} samolotów na płycie"

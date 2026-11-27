@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Language: is\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Paint hold-short"
+msgstr "Mála biðlínu"
+
+msgid "Hold short of runway 13"
+msgstr "Bíddu stutt fyrir braut 13"

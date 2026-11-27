@@ -1267,3 +1267,58 @@ never opens. Empty-list opts are not domain data.
 Do not pattern-match a bare list as your session payload.
 
 **Seen in:** [Réunion Piton tickets](features/23-telemetry-and-livedashboard/12-reunion-piton-tickets/).
+## Gettext translations
+
+### Missing interpolation bindings leave `%{key}` in the msgstr and log; they do not raise
+
+**What happens.** `gettext("Flight %{flight} to stand %{stand}", %{})`
+returns the Arabic msgstr with `%{flight}` and `%{stand}` still in the
+string. Logger emits `missing Gettext bindings: [:flight, :stand]`.
+There is no `KeyError`.
+
+**Why it matters.** Concatenation habits suggest a missing key should
+crash the request. Gettext soft-fails so a forgotten binding ships as a
+half-translated line with a log line, not a 500.
+
+**What to do.** Pass every `%{name}` as a binding. Treat the log as a
+defect, not as optional noise. Do not rescue `KeyError` around gettext.
+
+**Seen in:** [Cairo EgyptAir bindings](features/24-gettext-translations/09-cairo-egyptair-bindings/).
+
+### An empty `msgstr ""` falls back to the msgid
+
+**What happens.** The Kraków NOTAM msgid has `msgstr ""` in the Polish
+`.po`. `Gettext.gettext/2` returns the English msgid
+`"Snow NOTAM pending review"`, not an empty string. A filled msgstr
+returns the Polish line.
+
+**Why it matters.** An empty msgstr looks like "translate to blank".
+Gettext treats it as untranslated and falls back to the msgid, so the
+board still shows English.
+
+**What to do.** Leave msgstr empty only while a translation is pending.
+Assert fallback by comparing the result to the msgid, not to `""`.
+
+**Seen in:** [Kraków fallback msgid](features/24-gettext-translations/11-krakow-fallback-msgid/).
+
+### `put_locale/2` in a Plug does not reach the LiveView process
+
+**What happens.** A router locale plug calls `Gettext.put_locale/2` in
+the HTTP request process. That stamps the controller action. The
+LiveView that later mounts is another process, so its gettext calls use
+the default locale unless `on_mount` or `mount` puts the locale again.
+`Gettext.with_locale/3` restores the previous locale when its function
+returns, still only for the process that called it.
+
+**Why it matters.** Copying a controller locale plug onto a LiveView
+route looks shared. The connected LiveView never sees that process
+dictionary.
+
+**What to do.** Put locale in `on_mount` or `mount`/`handle_params` for
+LiveViews. Keep Plug `put_locale` for controller actions. Use
+`with_locale/3` when a brief must borrow another language without
+leaving the process there.
+
+**Seen in:** [Lyon Accept-Language](features/24-gettext-translations/05-lyon-accept-language/),
+[Tunis on_mount locale](features/24-gettext-translations/12-tunis-on-mount-locale/),
+[Riyadh with_locale](features/24-gettext-translations/10-riyadh-with-locale/).

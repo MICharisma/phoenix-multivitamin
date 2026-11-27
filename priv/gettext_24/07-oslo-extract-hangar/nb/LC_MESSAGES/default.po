@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Language: nb\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Hangar bay clear"
+msgstr "Hangarbukt klar"
+
+msgid "Plate stamped for inspection"
+msgstr "Plate stemplet for inspeksjon"

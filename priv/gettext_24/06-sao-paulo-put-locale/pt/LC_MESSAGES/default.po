@@ -1,0 +1,7 @@
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Cleared for pushback at Congonhas"
+msgstr "Autorizado para o pushback em Congonhas"
