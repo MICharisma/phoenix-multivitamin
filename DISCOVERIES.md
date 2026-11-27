@@ -1322,3 +1322,64 @@ leaving the process there.
 **Seen in:** [Lyon Accept-Language](features/24-gettext-translations/05-lyon-accept-language/),
 [Tunis on_mount locale](features/24-gettext-translations/12-tunis-on-mount-locale/),
 [Riyadh with_locale](features/24-gettext-translations/10-riyadh-with-locale/).
+## Testing
+
+### `render_async/1` is what waits; the first `live/2` HTML may still be loading
+
+**What happens.** Kalgoorlie starts `assign_async` only when `connected?(socket)`
+is true. A disconnected `get/2` keeps the static Goldfields line and never
+shows `27018G26KT`. After `live/2`, `render_async(view)` is what waits for
+the wind value. There is no `Process.sleep/1`.
+
+**Why it matters.** Asserting the wind on the first `live/2` HTML races the
+task. The dead render looks like a failed fetch when it was never started.
+
+**What to do.** Assert the static copy on `get/2`. Call `render_async/1`
+before locking the async value.
+
+**Seen in:** [Kalgoorlie wind async](features/25-testing/05-kalgoorlie-wind-async/).
+
+### SQLite DataCase stays `async: false` for Repo writes
+
+**What happens.** Dunedin posts through the ledger under
+`use PhoenixMultivitamin.DataCase, async: false`. A second test in the same
+module sees an empty table — the sandbox rolled the first post back. An
+`async: true` DataCase that still opens the sandbox can hit
+`database is locked` on SQLite. Pure in-memory totals use a separate
+`ExUnit.Case, async: true` module with no sandbox.
+
+**Why it matters.** Copying a Postgres `async: true` DataCase onto SQLite
+looks fine until two owners write at once.
+
+**What to do.** Keep Repo examples on `async: false`. Put CPU-only helpers
+on a plain async ExUnit case.
+
+**Seen in:** [Dunedin fuel ledger](features/25-testing/08-dunedin-fuel-ledger/).
+
+### Socket `connect/2` returns the atom `:error`, not `{:error, reason}`
+
+**What happens.** `connect(LauncestonTowerSocket, %{"desk" => "east"})`
+returns `:error`. A bad runway after a good connect returns
+`{:error, %{reason: "unknown_runway"}}` from `subscribe_and_join/3`.
+
+**Why it matters.** Pattern-matching `{:error, _}` on `connect/2` fails.
+The socket refused the desk before a channel existed.
+
+**What to do.** Match `:error` on connect. Match `{:error, map}` on join.
+
+**Seen in:** [Launceston tower channel](features/25-testing/07-launceston-tower-channel/).
+
+### `CaptureLog` is empty for `Logger.info` when test logger level is `:warning`
+
+**What happens.** `config/test.exs` sets `config :logger, level: :warning`.
+Archiving NZAA logs an info line. `capture_log/1` returns `""`. Refusing
+NZWN logs a warning; `capture_log/1` then contains
+`Waitematā vault refused NZWN`.
+
+**Why it matters.** Asserting on an info message under the default test
+logger level fails with an empty string, not a missing substring.
+
+**What to do.** Log warnings (or errors) for assertions, or raise the
+capture level. Do not assert on info lines under `:warning`.
+
+**Seen in:** [Auckland log vault](features/25-testing/13-auckland-log-vault/).
