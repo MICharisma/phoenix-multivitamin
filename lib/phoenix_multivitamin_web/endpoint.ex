@@ -15,6 +15,62 @@ defmodule PhoenixMultivitaminWeb.Endpoint do
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
+  # Feature 17 — Channels. Each scenario folder owns its socket module; these
+  # entries only name the paths its JavaScript client connects to.
+  socket "/features/17-channels/01-alderney-casquets-wire/socket",
+         PhoenixMultivitaminWeb.AlderneyCasquetsSocket,
+         websocket: true
+
+  socket "/features/17-channels/02-dinard-emeraude-talk/socket",
+         PhoenixMultivitaminWeb.DinardEmeraudeSocket,
+         websocket: true
+
+  socket "/features/17-channels/03-brest-iroise-orders/socket",
+         PhoenixMultivitaminWeb.BrestIroiseSocket,
+         websocket: true
+
+  socket "/features/17-channels/04-pau-pyrenees-callback/socket",
+         PhoenixMultivitaminWeb.PauPyreneesSocket,
+         websocket: true
+
+  socket "/features/17-channels/05-perpignan-tramontane-queue/socket",
+         PhoenixMultivitaminWeb.PerpignanTramontaneSocket,
+         websocket: true
+
+  socket "/features/17-channels/06-figari-bonifacio-isolation/socket",
+         PhoenixMultivitaminWeb.FigariBonifacioSocket,
+         websocket: true
+
+  socket "/features/17-channels/07-pantelleria-channel-desk/socket",
+         PhoenixMultivitaminWeb.PantelleriaDeskSocket,
+         websocket: true
+
+  socket "/features/17-channels/08-lampedusa-strait-talkback/socket",
+         PhoenixMultivitaminWeb.LampedusaStraitSocket,
+         websocket: true
+
+  socket "/features/17-channels/09-kotor-bay-radio-room/socket",
+         PhoenixMultivitaminWeb.KotorBaySocket,
+         websocket: true
+
+  socket "/features/17-channels/10-ohrid-lake-talk/socket",
+         PhoenixMultivitaminWeb.OhridLakeSocket,
+         websocket: true
+
+  socket "/features/17-channels/11-constanta-black-sea-wire/socket",
+         PhoenixMultivitaminWeb.ConstantaBlackSeaSocket,
+         websocket: true
+
+  socket "/features/17-channels/12-varna-golden-sands-talk/socket",
+         PhoenixMultivitaminWeb.VarnaGoldenSandsSocket,
+         websocket: true
+
+  socket "/features/17-channels/13-burgas-strandzha-orders/socket",
+         PhoenixMultivitaminWeb.BurgasStrandzhaSocket,
+         auth_token: true,
+         websocket: [connect_info: [:user_agent]],
+         longpoll: [connect_info: [:user_agent]]
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # When code reloading is disabled (e.g., in production),

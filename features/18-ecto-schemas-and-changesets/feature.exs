@@ -8,81 +8,94 @@
   slots: [
     %{
       number: 1,
-      slug: "01-debrecen-puszta-schema",
-      title: "Debrecen puszta schema",
-      bottled: false
+      slug: "01-addis-ababa-gate-plate",
+      title: "Addis Ababa gate plate",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AddisGatePlateLive
     },
     %{
       number: 2,
-      slug: "02-kosice-tatra-schema",
-      title: "Košice Tatra schema",
-      bottled: false
+      slug: "02-nairobi-bag-tags",
+      title: "Nairobi bag tags",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.NairobiBagTagsLive
     },
     %{
       number: 3,
-      slug: "03-poprad-high-tatras-entry",
-      title: "Poprad High Tatras entry",
-      bottled: false
+      slug: "03-dar-es-salaam-cargo-bay",
+      title: "Dar es Salaam cargo bay",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.DarCargoBayLive
     },
     %{
       number: 4,
-      slug: "04-brno-moravian-assignment",
-      title: "Brno Moravian assignment",
-      bottled: false
+      slug: "04-entebbe-station-watches",
+      title: "Entebbe station watches",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.EntebbeStationWatchesLive
     },
     %{
       number: 5,
-      slug: "05-plzen-pilsner-timing",
-      title: "Plzeň pilsner timing",
-      bottled: false
+      slug: "05-lusaka-hold-remaining",
+      title: "Lusaka hold remaining",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LusakaHoldRemainingLive
     },
     %{
       number: 6,
-      slug: "06-karlovy-vary-spa-drawer",
-      title: "Karlovy Vary spa drawer",
-      bottled: false
+      slug: "06-windhoek-friction-code",
+      title: "Windhoek friction code",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.WindhoekFrictionCodeLive
     },
     %{
       number: 7,
-      slug: "07-memmingen-allgau-schema",
-      title: "Memmingen Allgäu schema",
-      bottled: false
+      slug: "07-cape-town-duty-enum",
+      title: "Cape Town duty enum",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CapeTownDutyEnumLive
     },
     %{
       number: 8,
-      slug: "08-altenburg-nobitz-bill",
-      title: "Altenburg Nobitz bill",
-      bottled: false
+      slug: "08-johannesburg-turnaround-crew",
+      title: "Johannesburg turnaround crew",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.JohannesburgTurnaroundCrewLive
     },
     %{
       number: 9,
-      slug: "09-wangerooge-dune-correction",
-      title: "Wangerooge dune correction",
-      bottled: false
+      slug: "09-maputo-callsign-validate",
+      title: "Maputo callsign validate",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.MaputoCallsignValidateLive
     },
     %{
       number: 10,
-      slug: "10-borkum-paint-batch",
-      title: "Borkum paint batch",
-      bottled: false
+      slug: "10-antananarivo-designator",
+      title: "Antananarivo designator",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AntananarivoDesignatorLive
     },
     %{
       number: 11,
-      slug: "11-emden-ems-reading",
-      title: "Emden Ems reading",
-      bottled: false
+      slug: "11-mauritius-fuel-prepare",
+      title: "Mauritius fuel prepare",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.MauritiusFuelPrepareLive
     },
     %{
       number: 12,
-      slug: "12-liege-cargo-pass",
-      title: "Liège cargo pass",
-      bottled: false
+      slug: "12-mahe-notam-draft",
+      title: "Mahé NOTAM draft",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.MaheNotamDraftLive
     },
     %{
       number: 13,
-      slug: "13-luxembourg-findel-order",
-      title: "Luxembourg Findel order",
-      bottled: false
+      slug: "13-reunion-credential-card",
+      title: "Réunion credential card",
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ReunionCredentialCardLive
     }
   ]
 }
