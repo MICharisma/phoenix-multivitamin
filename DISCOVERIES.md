@@ -721,3 +721,53 @@ the keys the publisher used. Use `Phoenix.PubSub.broadcast/3` with your
 own message shape when no channel needs the `Broadcast` struct.
 
 **Seen in:** [Doha Pearl floor bell](features/15-pubsub/07-doha-pearl-floor-bell/).
+## Presence
+
+### `get_by_key/2` returns `[]` or one fetched presence map, not a list
+
+**What happens.** An absent key returns `[]`. A present key returns the map
+`fetch/2` produced for that key — typically `%{metas: [...]}` and any
+overlays — not a list of those maps. Heraklion's duty-supervisor check
+matches on `%{metas: [%{position: "supervisor"} | _]}`.
+
+**Why it matters.** The hexdocs example shows
+`[%{name: "User 1", metas: [...]}]`. Code that pattern-matches a list of
+presences will fail against Phoenix 1.8 / phoenix_pubsub 2.4: the fetched
+map is returned directly.
+
+**What to do.** Match `[]` for absence and a map with `:metas` for presence.
+Keep overlays on that same map in `fetch/2`.
+
+**Seen in:** [Heraklion Knossos presence](features/16-presence/02-heraklion-knossos-presence/).
+
+### Seeding with `list/1` still delivers your own join as a `presence_diff`
+
+**What happens.** Split Approach calls `Presence.list/1` right after
+`track/4`, then folds later diffs into the roster. The tracker still
+broadcasts a join for that same meta. Without de-duplicating by `phx_ref`,
+the controller appears twice.
+
+**Why it matters.** "List once, then apply diffs" looks complete after the
+list. The subscribe that made the list useful also delivers the join that
+built it.
+
+**What to do.** De-duplicate joins by `phx_ref` when merging into a roster
+you already seeded from `list/1`, or skip the list and build only from diffs.
+
+**Seen in:** [Split Diocletian watch](features/16-presence/05-split-diocletian-watch/).
+
+### A killed tracked process leaves no Presence ghost
+
+**What happens.** The tracker links every tracked pid. Killing a crew tablet
+produces a leave diff and `get_by_key/2` returns `[]`. Turku's board still
+shows the crew member under radio silence because the LiveView keeps its own
+short-lived ghost with `Process.send_after/3`.
+
+**Why it matters.** "Ghost presence" is a product concern, not a Presence
+leak. Presence has already removed the key; any lingering UI is yours to
+schedule and cancel.
+
+**What to do.** Treat Presence leaves as authoritative. Keep application
+ghosts in the LiveView (or another process) with an explicit timeout.
+
+**Seen in:** [Turku archipelago crew](features/16-presence/12-turku-archipelago-crew/).
