@@ -80,14 +80,20 @@ defmodule PhoenixMultivitaminWeb.Telemetry do
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
       summary("vm.total_run_queue_lengths.io")
-    ]
+    ] ++ station_metrics()
+  end
+
+  defp station_metrics do
+    PhoenixMultivitaminWeb.PembaCloveCounters.metrics() ++
+      PhoenixMultivitaminWeb.LilongweLakeCounts.metrics() ++
+      PhoenixMultivitaminWeb.HarareHighveldGauges.metrics() ++
+      PhoenixMultivitaminWeb.GaboroneKalahariThroughput.metrics() ++
+      PhoenixMultivitaminWeb.MayotteLagoonMetrics.dashboard_metrics()
   end
 
   defp periodic_measurements do
-    [
-      # A module, function and arguments to be invoked periodically.
-      # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {PhoenixMultivitaminWeb, :count_users, []}
-    ]
+    # Gaborone's apron MFA is started by that scenario's own poller once the
+    # Agent exists; leaving this empty keeps the app poller quiet at boot.
+    []
   end
 end

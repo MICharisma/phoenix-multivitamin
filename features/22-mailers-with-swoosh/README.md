@@ -1,42 +1,49 @@
 # Mailers with Swoosh
 
-Swoosh.Email, deliver, the local adapter, mailbox preview, and a mailer that sends a watch brief rather than a generic notice.
+Swoosh.Email building, HEEx mail templates, attachments, Local/Test adapters,
+`Swoosh.TestAssertions`, `/dev/mailbox` preview, Task-based async delivery, and
+`deliver`/`deliver_many` error tuples — never a real SMTP send.
 
 Official reference: [Mailers with Swoosh](https://hexdocs.pm/swoosh/Swoosh.html)
 
-## Examples (0 of 13 bottled)
+## Examples (13 of 13 bottled)
 
-01. Medellín Guatapé mailer — planned
-02. Guayaquil Guayas mailer — planned
-03. Belém Ver-o-Peso mailer — planned
-04. Salvador Pelourinho mailer — planned
-05. Belo Horizonte Pampulha mailer — planned
-06. Curitiba wire mailer — planned
-07. Porto Alegre gaúcho mailer — planned
-08. Florianópolis ilha mailer — planned
-09. Campo Grande Pantanal mailer — planned
-10. Luxor Nile mailer — planned
-11. Khartoum confluence mailer — planned
-12. Kumasi garden mailer — planned
-13. Lalibela rock mailer — planned
+01. [Medellín Guatapé mailer](01-medellin-guatape-mailer/) — available
+02. [Guayaquil Guayas mailer](02-guayaquil-guayas-mailer/) — available
+03. [Belém Ver-o-Peso mailer](03-belem-ver-o-peso-mailer/) — available
+04. [Salvador Pelourinho mailer](04-salvador-pelourinho-mailer/) — available
+05. [Belo Horizonte Pampulha mailer](05-belo-horizonte-pampulha-mailer/) — available
+06. [Curitiba wire mailer](06-curitiba-wire-mailer/) — available
+07. [Porto Alegre gaúcho mailer](07-porto-alegre-gaucho-mailer/) — available
+08. [Florianópolis ilha mailer](08-florianopolis-ilha-mailer/) — available
+09. [Campo Grande Pantanal mailer](09-campo-grande-pantanal-mailer/) — available
+10. [Luxor Nile mailer](10-luxor-nile-mailer/) — available
+11. [Khartoum confluence mailer](11-khartoum-confluence-mailer/) — available
+12. [Kumasi garden mailer](12-kumasi-garden-mailer/) — available
+13. [Lalibela rock mailer](13-lalibela-rock-mailer/) — available
 
 ## What each scenario adds
 
 | Slot | What it adds |
 | --- | --- |
-| 01 | new/0, to/2, from/2, subject/2, text_body/2 |
-| 02 | html_body/2 next to the text body |
-| 03 | deliver/1 through the application mailer |
-| 04 | The Local adapter and /dev/mailbox |
-| 05 | The Test adapter in mix test |
-| 06 | An attachment on the cook card |
-| 07 | A layout for HTML mail |
-| 08 | Assigns in a mailer HEEx template |
-| 09 | deliver_later versus deliver now |
-| 10 | A failed delivery and the error tuple |
-| 11 | Verified routes inside the body |
-| 12 | From an address that is a station, not noreply@ |
-| 13 | Capstone: text, html, attachment, and a mailbox preview |
+| 01 | `new/0`, `to/2`, `from/2`, `subject/2`, `text_body/2`; enforced brief + `String.Chars` |
+| 02 | `html_body/2` beside text; `cc/2`, `bcc/2`, `reply_to/2`; `with` recipient validation |
+| 03 | `Mailer.deliver/1` through the application mailer; guarded craft heads |
+| 04 | Local adapter override; `Memory` storage; `/dev/mailbox` preview path |
+| 05 | Test adapter; `assert_email_sent` / `refute_email_sent`; filtered `for` |
+| 06 | Regular `Swoosh.Attachment` via `Enum.reduce/3` |
+| 07 | HEEx mail layout with a named slot wrapping the HTML body |
+| 08 | `Email.assign/3` driving a HEEx mail template |
+| 09 | Sync `deliver/1` versus Oban-free `Task.async` delivery |
+| 10 | `{:error, :from_not_set}` and custom-adapter error tuples |
+| 11 | `header/3` plus verified `url(~p)` inside HTML and text |
+| 12 | Station `from` identity; `deliver_many/1`; `assert_emails_sent` |
+| 13 | Capstone: dual bodies, inline + regular attachments, Local preview, env adapter |
 
-Planned titles are proposals, not commitments. See
-[CONTRIBUTING.md](../../CONTRIBUTING.md) before filling a slot.
+Every scenario uses `Swoosh.Adapters.Test` (test) or `Swoosh.Adapters.Local`
+(dev / explicit override). Nothing sends real email.
+
+```sh
+mix test features/22-mailers-with-swoosh
+mix precommit
+```
