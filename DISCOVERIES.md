@@ -656,6 +656,121 @@ and the client opcode are not spelled the same.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
 
+## PubSub
+
+### Without `handle_info/2`, a message a hook passes on is dropped
+
+**What happens.** The Salalah apron LiveView defines no `handle_info/2`.
+Following runway calls attaches a `:handle_info` hook that halts on
+`{:runway_call, runway, condition}` and returns `{:cont, socket}` for
+anything else. A `{:tide_table, "Raysut", "High water 14:20"}` message
+reaches the hook, continues, and disappears. The LiveView keeps running
+and the next runway call still lands.
+
+**Why it matters.** A LiveView that defines even one `handle_info/2`
+clause crashes on a message no clause matches. Moving that work into a
+hook and deleting the callback turns the crash into a silent drop. A
+broadcast with a misspelled shape then looks like a broadcast that never
+arrived.
+
+**What to do.** Keep a catch-all clause in the hook if you need to see
+strays, or define `handle_info/2` with an explicit fallback. Do not rely
+on a crash to report an unexpected broadcast.
+
+**Seen in:** [Salalah monsoon call](features/15-pubsub/06-salalah-monsoon-call/).
+
+### `direct_broadcast/4` to your own node arrives after the call returns
+
+**What happens.** With the PG2 adapter, `direct_broadcast/4` sends the
+message to the adapter worker registered as
+`PhoenixMultivitamin.PubSub.Adapter`, which then dispatches it locally.
+With that worker suspended, `direct_broadcast(node(), ...)` returns `:ok`
+and nothing has been delivered, while `local_broadcast/3` in the same test
+has already delivered. The held message arrives once the worker resumes.
+A direct broadcast to `:"riyadh-acc@hijaz"`, a node that is not
+connected, also returns `:ok` and delivers nothing.
+
+**Why it matters.** `local_broadcast/3` and `broadcast/3` deliver to local
+subscribers before they return. A test that asserts right after a
+`direct_broadcast/4` can pass or fail by timing. An `:ok` from a direct
+broadcast does not mean the node exists.
+
+**What to do.** Use `local_broadcast/3` for this node. In tests of a
+direct broadcast, `assert_receive` or call `:sys.get_state/1` on the
+adapter worker before asserting. Check `Node.list/0` if delivery to a
+named node matters.
+
+**Seen in:** [Madinah Hijaz hold wire](features/15-pubsub/11-madinah-hijaz-hold-wire/).
+
+### `Endpoint.broadcast/3` needs a string event and does not encode the payload
+
+**What happens.** `Endpoint.broadcast!(topic, "ring", %{gate: "C12",
+rung_by: "Maryam"})` reaches a LiveView subscriber as
+`%Phoenix.Socket.Broadcast{topic: topic, event: "ring", payload: %{gate:
+"C12", rung_by: "Maryam"}}`. The payload's atom keys stay atoms.
+`Endpoint.broadcast!(topic, :ring, payload)` raises `FunctionClauseError`
+before anything is broadcast.
+
+**Why it matters.** Code that listens to both channels and LiveViews can
+expect JSON-shaped string keys. A LiveView receives the Elixir term it
+was given. Only the typespec says the event is a string; at runtime an
+atom event fails with an error that does not mention the event.
+
+**What to do.** Pass the event as a string, and match the payload with
+the keys the publisher used. Use `Phoenix.PubSub.broadcast/3` with your
+own message shape when no channel needs the `Broadcast` struct.
+
+**Seen in:** [Doha Pearl floor bell](features/15-pubsub/07-doha-pearl-floor-bell/).
+## Presence
+
+### `get_by_key/2` returns `[]` or one fetched presence map, not a list
+
+**What happens.** An absent key returns `[]`. A present key returns the map
+`fetch/2` produced for that key — typically `%{metas: [...]}` and any
+overlays — not a list of those maps. Heraklion's duty-supervisor check
+matches on `%{metas: [%{position: "supervisor"} | _]}`.
+
+**Why it matters.** The hexdocs example shows
+`[%{name: "User 1", metas: [...]}]`. Code that pattern-matches a list of
+presences will fail against Phoenix 1.8 / phoenix_pubsub 2.4: the fetched
+map is returned directly.
+
+**What to do.** Match `[]` for absence and a map with `:metas` for presence.
+Keep overlays on that same map in `fetch/2`.
+
+**Seen in:** [Heraklion Knossos presence](features/16-presence/02-heraklion-knossos-presence/).
+
+### Seeding with `list/1` still delivers your own join as a `presence_diff`
+
+**What happens.** Split Approach calls `Presence.list/1` right after
+`track/4`, then folds later diffs into the roster. The tracker still
+broadcasts a join for that same meta. Without de-duplicating by `phx_ref`,
+the controller appears twice.
+
+**Why it matters.** "List once, then apply diffs" looks complete after the
+list. The subscribe that made the list useful also delivers the join that
+built it.
+
+**What to do.** De-duplicate joins by `phx_ref` when merging into a roster
+you already seeded from `list/1`, or skip the list and build only from diffs.
+
+**Seen in:** [Split Diocletian watch](features/16-presence/05-split-diocletian-watch/).
+
+### A killed tracked process leaves no Presence ghost
+
+**What happens.** The tracker links every tracked pid. Killing a crew tablet
+produces a leave diff and `get_by_key/2` returns `[]`. Turku's board still
+shows the crew member under radio silence because the LiveView keeps its own
+short-lived ghost with `Process.send_after/3`.
+
+**Why it matters.** "Ghost presence" is a product concern, not a Presence
+leak. Presence has already removed the key; any lingering UI is yours to
+schedule and cancel.
+
+**What to do.** Treat Presence leaves as authoritative. Keep application
+ghosts in the LiveView (or another process) with an explicit timeout.
+
+**Seen in:** [Turku archipelago crew](features/16-presence/12-turku-archipelago-crew/).
 ## Channels
 
 ### `push`, `reply`, and `broadcast` cannot run inside `join/3`
