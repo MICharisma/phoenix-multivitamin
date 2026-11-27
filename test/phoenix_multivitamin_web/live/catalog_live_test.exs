@@ -11,7 +11,7 @@ defmodule PhoenixMultivitaminWeb.CatalogLiveTest do
     bottled = Catalog.bottled_slots()
 
     assert html =~ "Phoenix Multivitamin"
-    assert html =~ "195 of 325"
+    assert html =~ "286 of 325"
     assert html =~ "Routing and plugs"
     assert html =~ "LiveView lifecycle and events"
     assert html =~ "Function components and HEEx"
@@ -22,7 +22,15 @@ defmodule PhoenixMultivitaminWeb.CatalogLiveTest do
   test "every slot has a page", %{conn: conn} do
     for feature <- Catalog.features(), slot <- feature.slots do
       conn = get(conn, slot.path)
-      assert html_response(conn, 200) =~ slot.title
+
+      case conn.status do
+        200 ->
+          assert html_response(conn, 200) =~ slot.title
+
+        302 ->
+          # Auth-gated LiveViews halt on_mount and redirect when the session is empty.
+          assert redirected_to(conn)
+      end
     end
   end
 

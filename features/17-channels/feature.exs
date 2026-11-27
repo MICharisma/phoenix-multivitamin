@@ -10,79 +10,92 @@
       number: 1,
       slug: "01-alderney-casquets-wire",
       title: "Alderney Casquets wire",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AlderneyCasquetsWireLive
     },
     %{
       number: 2,
       slug: "02-dinard-emeraude-talk",
       title: "Dinard Émeraude talk",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.DinardEmeraudeTalkLive
     },
     %{
       number: 3,
       slug: "03-brest-iroise-orders",
       title: "Brest Iroise orders",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.BrestIroiseOrdersLive
     },
     %{
       number: 4,
       slug: "04-pau-pyrenees-callback",
       title: "Pau Pyrenees callback",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.PauPyreneesCallbackLive
     },
     %{
       number: 5,
       slug: "05-perpignan-tramontane-queue",
       title: "Perpignan tramontane queue",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.PerpignanTramontaneQueueLive
     },
     %{
       number: 6,
       slug: "06-figari-bonifacio-isolation",
       title: "Figari Bonifacio isolation",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.FigariBonifacioIsolationLive
     },
     %{
       number: 7,
       slug: "07-pantelleria-channel-desk",
       title: "Pantelleria channel desk",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.PantelleriaChannelDeskLive
     },
     %{
       number: 8,
       slug: "08-lampedusa-strait-talkback",
       title: "Lampedusa strait talkback",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LampedusaStraitTalkbackLive
     },
     %{
       number: 9,
       slug: "09-kotor-bay-radio-room",
       title: "Kotor bay radio room",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.KotorBayRadioRoomLive
     },
     %{
       number: 10,
       slug: "10-ohrid-lake-talk",
       title: "Ohrid lake talk",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.OhridLakeTalkLive
     },
     %{
       number: 11,
       slug: "11-constanta-black-sea-wire",
       title: "Constanța Black Sea wire",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ConstantaBlackSeaWireLive
     },
     %{
       number: 12,
       slug: "12-varna-golden-sands-talk",
       title: "Varna Golden Sands talk",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.VarnaGoldenSandsTalkLive
     },
     %{
       number: 13,
       slug: "13-burgas-strandzha-orders",
       title: "Burgas Strandzha orders",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.BurgasStrandzhaOrdersLive
     }
   ]
 }

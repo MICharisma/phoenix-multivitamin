@@ -656,6 +656,476 @@ and the client opcode are not spelled the same.
 
 **Seen in:** [Ittoqqortoormiit ignore](features/12-js-commands/11-ittoqqortoormiit-ignore/).
 
+## PubSub
+
+### Without `handle_info/2`, a message a hook passes on is dropped
+
+**What happens.** The Salalah apron LiveView defines no `handle_info/2`.
+Following runway calls attaches a `:handle_info` hook that halts on
+`{:runway_call, runway, condition}` and returns `{:cont, socket}` for
+anything else. A `{:tide_table, "Raysut", "High water 14:20"}` message
+reaches the hook, continues, and disappears. The LiveView keeps running
+and the next runway call still lands.
+
+**Why it matters.** A LiveView that defines even one `handle_info/2`
+clause crashes on a message no clause matches. Moving that work into a
+hook and deleting the callback turns the crash into a silent drop. A
+broadcast with a misspelled shape then looks like a broadcast that never
+arrived.
+
+**What to do.** Keep a catch-all clause in the hook if you need to see
+strays, or define `handle_info/2` with an explicit fallback. Do not rely
+on a crash to report an unexpected broadcast.
+
+**Seen in:** [Salalah monsoon call](features/15-pubsub/06-salalah-monsoon-call/).
+
+### `direct_broadcast/4` to your own node arrives after the call returns
+
+**What happens.** With the PG2 adapter, `direct_broadcast/4` sends the
+message to the adapter worker registered as
+`PhoenixMultivitamin.PubSub.Adapter`, which then dispatches it locally.
+With that worker suspended, `direct_broadcast(node(), ...)` returns `:ok`
+and nothing has been delivered, while `local_broadcast/3` in the same test
+has already delivered. The held message arrives once the worker resumes.
+A direct broadcast to `:"riyadh-acc@hijaz"`, a node that is not
+connected, also returns `:ok` and delivers nothing.
+
+**Why it matters.** `local_broadcast/3` and `broadcast/3` deliver to local
+subscribers before they return. A test that asserts right after a
+`direct_broadcast/4` can pass or fail by timing. An `:ok` from a direct
+broadcast does not mean the node exists.
+
+**What to do.** Use `local_broadcast/3` for this node. In tests of a
+direct broadcast, `assert_receive` or call `:sys.get_state/1` on the
+adapter worker before asserting. Check `Node.list/0` if delivery to a
+named node matters.
+
+**Seen in:** [Madinah Hijaz hold wire](features/15-pubsub/11-madinah-hijaz-hold-wire/).
+
+### `Endpoint.broadcast/3` needs a string event and does not encode the payload
+
+**What happens.** `Endpoint.broadcast!(topic, "ring", %{gate: "C12",
+rung_by: "Maryam"})` reaches a LiveView subscriber as
+`%Phoenix.Socket.Broadcast{topic: topic, event: "ring", payload: %{gate:
+"C12", rung_by: "Maryam"}}`. The payload's atom keys stay atoms.
+`Endpoint.broadcast!(topic, :ring, payload)` raises `FunctionClauseError`
+before anything is broadcast.
+
+**Why it matters.** Code that listens to both channels and LiveViews can
+expect JSON-shaped string keys. A LiveView receives the Elixir term it
+was given. Only the typespec says the event is a string; at runtime an
+atom event fails with an error that does not mention the event.
+
+**What to do.** Pass the event as a string, and match the payload with
+the keys the publisher used. Use `Phoenix.PubSub.broadcast/3` with your
+own message shape when no channel needs the `Broadcast` struct.
+
+**Seen in:** [Doha Pearl floor bell](features/15-pubsub/07-doha-pearl-floor-bell/).
+## Presence
+
+### `get_by_key/2` returns `[]` or one fetched presence map, not a list
+
+**What happens.** An absent key returns `[]`. A present key returns the map
+`fetch/2` produced for that key — typically `%{metas: [...]}` and any
+overlays — not a list of those maps. Heraklion's duty-supervisor check
+matches on `%{metas: [%{position: "supervisor"} | _]}`.
+
+**Why it matters.** The hexdocs example shows
+`[%{name: "User 1", metas: [...]}]`. Code that pattern-matches a list of
+presences will fail against Phoenix 1.8 / phoenix_pubsub 2.4: the fetched
+map is returned directly.
+
+**What to do.** Match `[]` for absence and a map with `:metas` for presence.
+Keep overlays on that same map in `fetch/2`.
+
+**Seen in:** [Heraklion Knossos presence](features/16-presence/02-heraklion-knossos-presence/).
+
+### Seeding with `list/1` still delivers your own join as a `presence_diff`
+
+**What happens.** Split Approach calls `Presence.list/1` right after
+`track/4`, then folds later diffs into the roster. The tracker still
+broadcasts a join for that same meta. Without de-duplicating by `phx_ref`,
+the controller appears twice.
+
+**Why it matters.** "List once, then apply diffs" looks complete after the
+list. The subscribe that made the list useful also delivers the join that
+built it.
+
+**What to do.** De-duplicate joins by `phx_ref` when merging into a roster
+you already seeded from `list/1`, or skip the list and build only from diffs.
+
+**Seen in:** [Split Diocletian watch](features/16-presence/05-split-diocletian-watch/).
+
+### A killed tracked process leaves no Presence ghost
+
+**What happens.** The tracker links every tracked pid. Killing a crew tablet
+produces a leave diff and `get_by_key/2` returns `[]`. Turku's board still
+shows the crew member under radio silence because the LiveView keeps its own
+short-lived ghost with `Process.send_after/3`.
+
+**Why it matters.** "Ghost presence" is a product concern, not a Presence
+leak. Presence has already removed the key; any lingering UI is yours to
+schedule and cancel.
+
+**What to do.** Treat Presence leaves as authoritative. Keep application
+ghosts in the LiveView (or another process) with an explicit timeout.
+
+**Seen in:** [Turku archipelago crew](features/16-presence/12-turku-archipelago-crew/).
+## Channels
+
+### `push`, `reply`, and `broadcast` cannot run inside `join/3`
+
+**What happens.** A Kotor radio-room `join/3` that calls
+`broadcast_from!(socket, "operator_on", ...)` raises
+`RuntimeError: push/3, reply/2, and broadcast/3 can only be called after
+the socket has finished joining.` ChannelTest then sees
+`{:error, %{reason: "join crashed"}}`.
+
+**Why it matters.** Announcing a join to the rest of the topic looks like
+it belongs in `join/3`. The socket is not marked joined until `join/3`
+returns.
+
+**What to do.** `send(self(), :after_join)` from `join/3` and broadcast
+from `handle_info(:after_join, socket)`. Put the join reply map in the
+`{:ok, reply, socket}` return value instead of pushing it.
+
+**Seen in:** [Kotor bay radio room](features/17-channels/09-kotor-bay-radio-room/),
+[Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+
+### `auth_token: true` must be a top-level `socket/3` option
+
+**What happens.** Declaring
+`websocket: [auth_token: true, connect_info: [:auth_token, :user_agent]]`
+(and the same under `longpoll:`) still leaves the transport's
+`:auth_token` option `nil`. `Endpoint.socket/3` copies the *top-level*
+`:auth_token` onto each transport with `Keyword.put/3`. When that
+top-level key is missing, the copy writes `nil` and overwrites the
+nested `true`. LongPoll then never reads `x-phoenix-authtoken`,
+`connect_info.auth_token` is `nil`, and a signed watch returns JSON
+`{"status": 403}`.
+
+**Why it matters.** Nesting `auth_token: true` next to `connect_info`
+looks complete. The header is ignored and every longpoll session is
+forbidden.
+
+**What to do.** Set `auth_token: true` on the `socket/3` options
+themselves. `load_config/2` then adds `:auth_token` to `connect_info`
+automatically; list `:user_agent` (and any other keys) under
+`websocket:` / `longpoll:`.
+
+**Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+
+### LongPoll always answers HTTP 200; the transport status is in the JSON body
+
+**What happens.** A successful new LongPoll session returns HTTP 200 with
+`{"status": 410, "token": ...}`. A refused connect returns HTTP 200 with
+`{"status": 403}`. `json_response(conn, 410)` raises even when the
+transport status is Gone.
+
+**Why it matters.** Asserting the Plug status for Gone or Forbidden
+misses the body LongPoll actually uses. Clients and tests that only look
+at `conn.status` never see 410 or 403.
+
+**What to do.** Assert `json_response(conn, 200)` and match
+`%{"status" => 410, "token" => _}` or `%{"status" => 403}`.
+
+**Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+## Ecto schemas and changesets
+
+### A virtual field survives Repo.insert and is nil after Repo.get
+
+**What happens.** `LusakaHoldCard.changeset/2` puts `remaining_min` with
+`put_change/3`. `Repo.insert/1` returns a struct whose `remaining_min` is
+`17`. `Repo.get!(LusakaHoldCard, id).remaining_min` is `nil`. The column
+was never in the migration.
+
+**Why it matters.** Code that treats the insert return and a later load as
+the same shape will read a hold that looks full after reload. The virtual
+value lived only in memory on that struct.
+
+**What to do.** Recompute virtual fields after load, or store them if the
+page must show them later. Do not expect `Repo.get/2` to keep `virtual: true`.
+
+**Seen in:** [Lusaka hold remaining](features/18-ecto-schemas-and-changesets/05-lusaka-hold-remaining/).
+
+### unique_constraint/3 stays silent during validate
+
+**What happens.** The first `MDG441` insert succeeds. A `phx-change` of the
+same callsign after that write does not show `"has already been taken"`.
+Only a second `Repo.insert/1` against the unique index adds the error.
+`changeset.valid?` is still true on validate for a callsign that already
+exists.
+
+**Why it matters.** Live validation looks like it checked uniqueness. It
+did not. The desk can look clear until submit races the index.
+
+**What to do.** Treat uniqueness as a write-time check. Show the constraint
+error from the failed insert, or query explicitly if the form must warn
+earlier.
+
+**Seen in:** [Antananarivo designator](features/18-ecto-schemas-and-changesets/10-antananarivo-designator/).
+
+### prepare_changes/2 does not run on an invalid changeset
+
+**What happens.** A Mauritius ticket with `litres: 0` and
+`unit_hint: "us_gallon"` fails `validate_number`. `prepare_changes` never
+converts the gallons. No row is written. A valid `1000` US gallon ticket
+inserts as `3785` litres.
+
+**Why it matters.** A prepare hook looks like it always normalizes before
+the write. Invalid cards skip it entirely, so side effects inside prepare
+do not fire on failed validation.
+
+**What to do.** Keep prepare_changes for write-time normalization of valid
+data. Do not rely on it to run during validate or on invalid cards.
+
+**Seen in:** [Mauritius fuel prepare](features/18-ecto-schemas-and-changesets/11-mauritius-fuel-prepare/).
+
+### redact: true omits the field from inspect as trailing `...`
+
+**What happens.** `field :access_token, :string, redact: true` stores
+`"run-hangar-88"` on the struct. `inspect(card)` does not contain that
+string and does not print `**redacted**`. The token is folded into the
+trailing `...` of the `#Schema<...>` inspect form.
+
+**Why it matters.** Tests or logs that grep for `**redacted**` miss the
+actual redact behavior on current Ecto. The secret is hidden; the marker
+string is not.
+
+**What to do.** Assert the secret is absent from `inspect/1`, not that a
+literal `**redacted**` appears.
+
+**Seen in:** [Réunion credential card](features/18-ecto-schemas-and-changesets/13-reunion-credential-card/).
+## Ecto queries and contexts
+
+### `Repo.stream/2` returns a stream; the raise waits until you reduce it
+
+**What happens.** Outside a transaction, `Repo.stream/2` still returns a
+`%Stream{}`. The error does not fire at the call site. Reducing that
+stream with `Enum.reduce/3` raises `RuntimeError` with
+`"cannot reduce stream outside of transaction"`. The wording is
+"cannot reduce stream", not "cannot be invoked".
+
+**Why it matters.** A context that "opens" a stream and hands it to the
+caller looks fine in the debugger. The crash lands later, in whoever
+consumes the stream, and a regex written from the guides' "must be run
+inside a transaction" phrase will miss the real message.
+
+**What to do.** Wrap the stream and its consumption in
+`Repo.transaction/2`. Assert on `"cannot reduce stream outside of
+transaction"` when testing the failure path.
+
+**Seen in:** [Buenos Aires ledger stream](features/19-ecto-queries-and-contexts/12-buenos-aires-ledger-stream/).
+
+### `Repo.aggregate(:count)` on an empty filtered query returns `0`, not `nil`
+
+**What happens.** `where(occupied == true) |> Repo.aggregate(:count)` on
+an empty apron returns `0`. The LiveView can assign that integer
+directly. `:avg` on an empty set is the one that returns `nil`.
+
+**Why it matters.** Treating a missing aggregate as "no value" and
+writing `count || 0` is harmless for `:count` and wrong for `:avg`.
+The empty and zero cases look the same for counts.
+
+**What to do.** For `:count`, assert `0` on an empty table. For `:avg`,
+handle `nil` separately.
+
+**Seen in:** [Auckland apron count](features/19-ecto-queries-and-contexts/11-auckland-apron-count/).
+## Ecto migrations and multis
+
+### SQLite foreign key errors arrive with a nil constraint name
+
+**What happens.** Inserting a `VigoBayCard` with `vigo_stand_id: -1` hits
+the foreign key. The changeset lists
+`"vigo_bay_cards_vigo_stand_id_fkey"`, but the adapter reports the
+violated constraint as `nil`. `Repo.insert/1` raises
+`Ecto.ConstraintError` instead of returning `{:error, changeset}`.
+
+**Why it matters.** `foreign_key_constraint/3` only absorbs errors whose
+names match. A nil name never matches, so the LiveView cannot show a
+field error the way Postgres would.
+
+**What to do.** Rescue `Ecto.ConstraintError` on SQLite when testing a
+missing parent, or look the parent up before insert. Do not expect
+`{:error, changeset}` from a bare `foreign_key_constraint/3` alone.
+
+**Seen in:** [Vigo Rías Baixas migration](features/20-ecto-migrations-and-multis/03-vigo-rias-baixas-migration/).
+
+### SQLite refuses `NOT NULL` without `DEFAULT` on a populated table
+
+**What happens.** After a row exists in `coruna_hercules_cabinets`,
+`ALTER TABLE … ADD COLUMN forbidden_mark TEXT NOT NULL` returns an
+error whose message mentions `NOT NULL` (or that a default is required).
+The same alter with `DEFAULT 0` is what the migration used for
+`lamp_hours`.
+
+**Why it matters.** An alter that looks fine on an empty table fails the
+moment production already has rows. SQLite is stricter here than a
+Postgres `ADD COLUMN … NOT NULL` that rewrites with a default in one
+step.
+
+**What to do.** When adding a `null: false` column in a migration that
+may run against existing rows, pass `default:`. Probe the refusal in
+tests before shipping the alter.
+
+**Seen in:** [A Coruña Hercules cabinet](features/20-ecto-migrations-and-multis/05-a-coruna-hercules-cabinet/).
+
+### Failed Multi keeps `changes_so_far` but rolls the database back
+
+**What happens.** Salamanca inserts an order, then fails the line insert
+on `qty: 0`. The transaction returns
+`{:error, :line, changeset, %{order: order}}`. `order.id` is present in
+`changes_so_far`, yet `Repo.get(SalamancaPlazaOrder, order.id)` is `nil`
+and the orders table count is `0`.
+
+**Why it matters.** Code that trusts `changes_so_far` as "already
+written" will hand out an id that no longer exists. The failed step name
+is useful; the structs in `changes_so_far` are not durable.
+
+**What to do.** Treat `changes_so_far` as diagnostic only. After
+`{:error, failed_op, failed_value, changes_so_far}`, re-query if you
+need to know what remains in the database.
+
+**Seen in:** [Salamanca Plaza Mayor multi](features/20-ecto-migrations-and-multis/10-salamanca-plaza-mayor-multi/).
+
+### SQLite rejects `ALTER TABLE ADD CONSTRAINT`
+
+**What happens.** `create constraint(:santiago_vault_tickets, :litres_positive, check: "litres > 0")`
+raises `ArgumentError` with
+`"SQLite3 does not support ALTER TABLE ADD CONSTRAINT."` Raw
+`ALTER TABLE … ADD CONSTRAINT … CHECK (…)` is refused the same way.
+A duplicate `vault_code` still fails only after `Repo.insert/1` hits the
+unique index.
+
+**Why it matters.** A migration that works on Postgres fails on this
+bottle's SQLite adapter at the constraint step. Putting CHECK in a
+separate `create constraint/3` after `create table` is not portable here.
+
+**What to do.** Embed `CHECK` inside `CREATE TABLE` (via `execute/2`),
+or enforce the rule in the changeset with `validate_number/3`. Keep
+`unique_index/3`; that path works on SQLite.
+
+**Seen in:** [Santiago Compostela vault](features/20-ecto-migrations-and-multis/04-santiago-compostela-vault/).
+
+### Unique constraint stays silent until `Repo.insert`
+
+**What happens.** The first `SCQ-900` insert succeeds. A second submit of
+the same vault code fails only when `Repo.insert/1` hits the unique
+index. `unique_constraint/3` does not add the error during a cast-only
+validate.
+
+**Why it matters.** Live validation can look clear while the migration's
+unique index is waiting for the write.
+
+**What to do.** Treat uniqueness as a write-time check. Show the
+constraint error from the failed insert.
+
+**Seen in:** [Santiago Compostela vault](features/20-ecto-migrations-and-multis/04-santiago-compostela-vault/).
+## Auth and scopes
+
+### `on_mount` `{:halt, redirect(...)}` makes `live/2` return `{:error, {:redirect, ...}}`
+
+**What happens.** Asunción's `ParaguayAuth.on_mount(:require, ...)` returns
+`{:halt, redirect(socket, to: "/")}`. A ConnCase `live(conn, path)` without
+a session token does not raise. It returns
+`{:error, {:redirect, %{to: "/"}}}`.
+
+**Why it matters.** A test that pattern-matches `{:ok, view, html}` fails
+with a MatchError and hides the redirect. The guide's "halt the mount"
+looks like a hard stop; LiveViewTest surfaces it as a tagged error tuple.
+
+**What to do.** Assert `{:error, {:redirect, %{to: expected}}}` for the
+unauthenticated path. Do not wrap `live/2` in `assert_raise`.
+
+**Seen in:** [Asunción Paraguay scope](features/21-auth-and-scopes/06-asuncion-paraguay-scope/),
+[Montevideo Rambla scope](features/21-auth-and-scopes/07-montevideo-rambla-scope/).
+
+### An assign_scope plug sets `:current_scope` to `nil`, it does not omit the key
+
+**What happens.** Arequipa's `MistiAssignScope.call/2` with an empty
+session assigns `current_scope: nil`. `conn.assigns.current_scope == nil`
+is true. The key is present.
+
+**Why it matters.** `Map.get(assigns, :current_scope)` and
+`assigns[:current_scope]` both return `nil`, so you cannot tell "guest"
+from "plug never ran" with a bare nil check. Templates that do
+`@current_scope.clerk` crash on the guest path.
+
+**What to do.** Match on `%Scope{}` versus `nil` before reading fields.
+In LiveView, render a locked board when the assign is nil.
+
+**Seen in:** [Arequipa Misti scope](features/21-auth-and-scopes/02-arequipa-misti-scope/).
+
+### A magic-link token becomes `:current_scope`, not `:current_user`
+
+**What happens.** Valdivia's fog link mints a token and redeems it into a
+`%LosRiosScope{}`. The LiveView assigns `:current_scope`. The rendered
+assign-key list contains `current_scope` and never `current_user`.
+
+**Why it matters.** Older auth examples put the user struct on the
+socket. Phoenix 1.8 scopes put a Scope there. Code that reaches for
+`@current_user` after a gen.auth-style login finds nothing.
+
+**What to do.** Pass `@current_scope` into contexts. Put clerk or station
+fields on the scope struct, not on a parallel user assign.
+
+**Seen in:** [Valdivia Los Ríos scope](features/21-auth-and-scopes/09-valdivia-los-rios-scope/).
+
+### Sudo checks the clock on the scope, not "is signed in"
+
+**What happens.** Concepción stores `biobio_authenticated_at` as an
+ISO8601 string in the session. Mount rebuilds `%BiobioScope{authenticated_at: dt}`.
+`BiobioSudo.sudo_valid?/1` uses `DateTime.diff/3`. A session that is still
+signed in but older than the window fails `unlock_master_plates` until
+`renew_session` writes a fresh timestamp.
+
+**Why it matters.** "Require authenticated" and "require sudo" are
+different gates. A long-lived session token alone does not satisfy
+settings that need a recent credential check.
+
+**What to do.** Keep `authenticated_at` on the scope. Re-check the window
+on sensitive events. Renew by writing a new timestamp into the session
+(or re-assigning the scope), not by toggling a boolean.
+
+**Seen in:** [Concepción Biobío scope](features/21-auth-and-scopes/10-concepcion-biobio-scope/).
+
+### A scoped logout broadcast reaches every LiveView on that station topic
+
+**What happens.** Iquique's topic is `"iquique:IQQ:nitrate"`. The LiveView
+subscribes on connected mount. An external
+`NitrateBoards.broadcast_logout(scope)` delivers `{:nitrate_logout, "IQQ"}`
+to that process. `handle_info/2` clears the board. A second station's
+topic does not receive the message.
+
+**Why it matters.** Broadcasting `"logout"` on a global topic signs
+everyone out. Scoping the topic to the station keeps Valentina's hangar
+from kicking a clerk on another field.
+
+**What to do.** Subscribe and broadcast on `"app:#{scope.station_id}:…"`.
+Handle `{:…_logout, station_id}` by clearing `:current_scope` (or
+redirecting), and ignore foreign station ids.
+
+**Seen in:** [Iquique nitrate scope](features/21-auth-and-scopes/11-iquique-nitrate-scope/),
+[Cartagena walled scope](features/21-auth-and-scopes/13-cartagena-walled-scope/).
+
+### `:mount_current_scope` continues with nil; `:require_authenticated` redirects
+
+**What happens.** Montevideo's `RamblaAuth.on_mount(:mount_current_scope, …)`
+always returns `{:cont, socket}` and may leave `current_scope` as `nil`.
+The same module's `:require_authenticated` clause redirects when the
+scope is nil. Calling the mount hook alone never redirects.
+
+**Why it matters.** gen.auth exposes both hooks. Putting only
+`:mount_current_scope` on a live_session leaves the page public. A
+settings LiveView that forgets `:require_authenticated` renders with a
+nil scope instead of bouncing to the login.
+
+**What to do.** Use `:mount_current_scope` for public-or-private pages.
+Stack or swap to `:require_authenticated` for desks that must have a
+scope. Assert both shapes in tests.
+
+**Seen in:** [Montevideo Rambla scope](features/21-auth-and-scopes/07-montevideo-rambla-scope/),
+[Córdoba Sierras scope](features/21-auth-and-scopes/08-cordoba-ar-sierras-scope/).
 ## Mailers with Swoosh
 
 ### `Mailer.deliver/2` with `adapter: Local` bypasses the Test mailbox

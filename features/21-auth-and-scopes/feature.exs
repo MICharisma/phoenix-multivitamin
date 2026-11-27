@@ -10,79 +10,92 @@
       number: 1,
       slug: "01-cordoba-mezquita-scope",
       title: "Córdoba Mezquita scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CordobaMezquitaScopeLive
     },
     %{
       number: 2,
       slug: "02-arequipa-misti-scope",
       title: "Arequipa Misti scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ArequipaMistiScopeLive
     },
     %{
       number: 3,
       slug: "03-la-paz-altiplano-scope",
       title: "La Paz altiplano scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.LaPazAltiplanoScopeLive
     },
     %{
       number: 4,
       slug: "04-sucre-white-city-scope",
       title: "Sucre white-city scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SucreWhiteCityScopeLive
     },
     %{
       number: 5,
       slug: "05-santa-cruz-oriente-scope",
       title: "Santa Cruz oriente scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.SantaCruzOrienteScopeLive
     },
     %{
       number: 6,
       slug: "06-asuncion-paraguay-scope",
       title: "Asunción Paraguay scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AsuncionParaguayScopeLive
     },
     %{
       number: 7,
       slug: "07-montevideo-rambla-scope",
       title: "Montevideo Rambla scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.MontevideoRamblaScopeLive
     },
     %{
       number: 8,
       slug: "08-cordoba-ar-sierras-scope",
       title: "Córdoba Sierras scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CordobaSierrasScopeLive
     },
     %{
       number: 9,
       slug: "09-valdivia-los-rios-scope",
       title: "Valdivia Los Ríos scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ValdiviaLosRiosScopeLive
     },
     %{
       number: 10,
       slug: "10-concepcion-biobio-scope",
       title: "Concepción Biobío scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.ConcepcionBiobioScopeLive
     },
     %{
       number: 11,
       slug: "11-iquique-nitrate-scope",
       title: "Iquique nitrate scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.IquiqueNitrateScopeLive
     },
     %{
       number: 12,
       slug: "12-arica-morro-scope",
       title: "Arica Morro scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.AricaMorroScopeLive
     },
     %{
       number: 13,
       slug: "13-cartagena-walled-scope",
       title: "Cartagena walled scope",
-      bottled: false
+      bottled: true,
+      live_module: PhoenixMultivitaminWeb.CartagenaWalledScopeLive
     }
   ]
 }

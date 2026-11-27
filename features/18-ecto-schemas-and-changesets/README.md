@@ -4,39 +4,36 @@ schema, field, embeds, associations, and changesets that cast, validate, and ref
 
 Official reference: [Ecto schemas and changesets](https://hexdocs.pm/ecto/Ecto.Schema.html)
 
-## Examples (0 of 13 bottled)
+## Examples (13 of 13 bottled)
 
-01. Debrecen puszta schema — planned
-02. Košice Tatra schema — planned
-03. Poprad High Tatras entry — planned
-04. Brno Moravian assignment — planned
-05. Plzeň pilsner timing — planned
-06. Karlovy Vary spa drawer — planned
-07. Memmingen Allgäu schema — planned
-08. Altenburg Nobitz bill — planned
-09. Wangerooge dune correction — planned
-10. Borkum paint batch — planned
-11. Emden Ems reading — planned
-12. Liège cargo pass — planned
-13. Luxembourg Findel order — planned
+01. [Addis Ababa gate plate](01-addis-ababa-gate-plate/) — available
+02. [Nairobi bag tags](02-nairobi-bag-tags/) — available
+03. [Dar es Salaam cargo bay](03-dar-es-salaam-cargo-bay/) — available
+04. [Entebbe station watches](04-entebbe-station-watches/) — available
+05. [Lusaka hold remaining](05-lusaka-hold-remaining/) — available
+06. [Windhoek friction code](06-windhoek-friction-code/) — available
+07. [Cape Town duty enum](07-cape-town-duty-enum/) — available
+08. [Johannesburg turnaround crew](08-johannesburg-turnaround-crew/) — available
+09. [Maputo callsign validate](09-maputo-callsign-validate/) — available
+10. [Antananarivo designator](10-antananarivo-designator/) — available
+11. [Mauritius fuel prepare](11-mauritius-fuel-prepare/) — available
+12. [Mahé NOTAM draft](12-mahe-notam-draft/) — available
+13. [Réunion credential card](13-reunion-credential-card/) — available
 
 ## What each scenario adds
 
 | Slot | What it adds |
 | --- | --- |
-| 01 | schema/2 with fields that match the cook card |
-| 02 | changeset/2 casting a known set of keys |
-| 03 | validate_required/3 on the fields the cook must fill |
-| 04 | validate_number/3 and validate_length/3 |
-| 05 | unique_constraint/3 after a race at the apron |
-| 06 | embeds_one and embeds_many |
-| 07 | belongs_to and has_many on a station and its watches |
-| 08 | virtual fields that never hit the table |
-| 09 | Redact on a credential field |
-| 10 | cast_assoc/3 for nested watches |
-| 11 | change/2 versus cast/3 |
-| 12 | validate_change/3 with a custom function |
-| 13 | Capstone: embed, assoc, required, and a unique cook number |
-
-Planned titles are proposals, not commitments. See
-[CONTRIBUTING.md](../../CONTRIBUTING.md) before filling a slot.
+| 01 | `embedded_schema/1` with typed fields and no table |
+| 02 | `embeds_many/3` and `cast_embed/3` for bag tags |
+| 03 | `embeds_one/3` with a balanced cargo bay |
+| 04 | `belongs_to/3` and `has_many/3` on a station and its watches |
+| 05 | Virtual fields that survive insert and vanish on reload |
+| 06 | A custom `Ecto.Type` for runway friction codes |
+| 07 | `Ecto.Enum` for duty status |
+| 08 | `cast_assoc/3` for nested crew legs |
+| 09 | `validate_change/3` with an ICAO callsign check |
+| 10 | `unique_constraint/3` after a race at Ivato |
+| 11 | `prepare_changes/2` converting gallons to litres |
+| 12 | Schemaless changesets that return a map |
+| 13 | Capstone: `change/2` versus `cast/3`, plus `redact: true` |
