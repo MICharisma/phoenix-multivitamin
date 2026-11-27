@@ -771,3 +771,62 @@ schedule and cancel.
 ghosts in the LiveView (or another process) with an explicit timeout.
 
 **Seen in:** [Turku archipelago crew](features/16-presence/12-turku-archipelago-crew/).
+## Channels
+
+### `push`, `reply`, and `broadcast` cannot run inside `join/3`
+
+**What happens.** A Kotor radio-room `join/3` that calls
+`broadcast_from!(socket, "operator_on", ...)` raises
+`RuntimeError: push/3, reply/2, and broadcast/3 can only be called after
+the socket has finished joining.` ChannelTest then sees
+`{:error, %{reason: "join crashed"}}`.
+
+**Why it matters.** Announcing a join to the rest of the topic looks like
+it belongs in `join/3`. The socket is not marked joined until `join/3`
+returns.
+
+**What to do.** `send(self(), :after_join)` from `join/3` and broadcast
+from `handle_info(:after_join, socket)`. Put the join reply map in the
+`{:ok, reply, socket}` return value instead of pushing it.
+
+**Seen in:** [Kotor bay radio room](features/17-channels/09-kotor-bay-radio-room/),
+[Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+
+### `auth_token: true` must be a top-level `socket/3` option
+
+**What happens.** Declaring
+`websocket: [auth_token: true, connect_info: [:auth_token, :user_agent]]`
+(and the same under `longpoll:`) still leaves the transport's
+`:auth_token` option `nil`. `Endpoint.socket/3` copies the *top-level*
+`:auth_token` onto each transport with `Keyword.put/3`. When that
+top-level key is missing, the copy writes `nil` and overwrites the
+nested `true`. LongPoll then never reads `x-phoenix-authtoken`,
+`connect_info.auth_token` is `nil`, and a signed watch returns JSON
+`{"status": 403}`.
+
+**Why it matters.** Nesting `auth_token: true` next to `connect_info`
+looks complete. The header is ignored and every longpoll session is
+forbidden.
+
+**What to do.** Set `auth_token: true` on the `socket/3` options
+themselves. `load_config/2` then adds `:auth_token` to `connect_info`
+automatically; list `:user_agent` (and any other keys) under
+`websocket:` / `longpoll:`.
+
+**Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
+
+### LongPoll always answers HTTP 200; the transport status is in the JSON body
+
+**What happens.** A successful new LongPoll session returns HTTP 200 with
+`{"status": 410, "token": ...}`. A refused connect returns HTTP 200 with
+`{"status": 403}`. `json_response(conn, 410)` raises even when the
+transport status is Gone.
+
+**Why it matters.** Asserting the Plug status for Gone or Forbidden
+misses the body LongPoll actually uses. Clients and tests that only look
+at `conn.status` never see 410 or 403.
+
+**What to do.** Assert `json_response(conn, 200)` and match
+`%{"status" => 410, "token" => _}` or `%{"status" => 403}`.
+
+**Seen in:** [Burgas Strandzha orders](features/17-channels/13-burgas-strandzha-orders/).
