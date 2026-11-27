@@ -106,7 +106,7 @@ the story.
 12. [JS commands](features/12-js-commands/) — 13 of 13 bottled
 13. [Client hooks](features/13-client-hooks/) — 13 of 13 bottled
 14. [Uploads](features/14-uploads/) — 13 of 13 bottled
-15. [PubSub](features/15-pubsub/) — 0 of 13 bottled
+15. [PubSub](features/15-pubsub/) — 13 of 13 bottled
 16. [Presence](features/16-presence/) — 13 of 13 bottled
 17. [Channels](features/17-channels/) — 0 of 13 bottled
 18. [Ecto schemas and changesets](features/18-ecto-schemas-and-changesets/) — 0 of 13 bottled
