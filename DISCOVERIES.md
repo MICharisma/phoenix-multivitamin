@@ -931,3 +931,93 @@ The empty and zero cases look the same for counts.
 handle `nil` separately.
 
 **Seen in:** [Auckland apron count](features/19-ecto-queries-and-contexts/11-auckland-apron-count/).
+## Ecto migrations and multis
+
+### SQLite foreign key errors arrive with a nil constraint name
+
+**What happens.** Inserting a `VigoBayCard` with `vigo_stand_id: -1` hits
+the foreign key. The changeset lists
+`"vigo_bay_cards_vigo_stand_id_fkey"`, but the adapter reports the
+violated constraint as `nil`. `Repo.insert/1` raises
+`Ecto.ConstraintError` instead of returning `{:error, changeset}`.
+
+**Why it matters.** `foreign_key_constraint/3` only absorbs errors whose
+names match. A nil name never matches, so the LiveView cannot show a
+field error the way Postgres would.
+
+**What to do.** Rescue `Ecto.ConstraintError` on SQLite when testing a
+missing parent, or look the parent up before insert. Do not expect
+`{:error, changeset}` from a bare `foreign_key_constraint/3` alone.
+
+**Seen in:** [Vigo Rías Baixas migration](features/20-ecto-migrations-and-multis/03-vigo-rias-baixas-migration/).
+
+### SQLite refuses `NOT NULL` without `DEFAULT` on a populated table
+
+**What happens.** After a row exists in `coruna_hercules_cabinets`,
+`ALTER TABLE … ADD COLUMN forbidden_mark TEXT NOT NULL` returns an
+error whose message mentions `NOT NULL` (or that a default is required).
+The same alter with `DEFAULT 0` is what the migration used for
+`lamp_hours`.
+
+**Why it matters.** An alter that looks fine on an empty table fails the
+moment production already has rows. SQLite is stricter here than a
+Postgres `ADD COLUMN … NOT NULL` that rewrites with a default in one
+step.
+
+**What to do.** When adding a `null: false` column in a migration that
+may run against existing rows, pass `default:`. Probe the refusal in
+tests before shipping the alter.
+
+**Seen in:** [A Coruña Hercules cabinet](features/20-ecto-migrations-and-multis/05-a-coruna-hercules-cabinet/).
+
+### Failed Multi keeps `changes_so_far` but rolls the database back
+
+**What happens.** Salamanca inserts an order, then fails the line insert
+on `qty: 0`. The transaction returns
+`{:error, :line, changeset, %{order: order}}`. `order.id` is present in
+`changes_so_far`, yet `Repo.get(SalamancaPlazaOrder, order.id)` is `nil`
+and the orders table count is `0`.
+
+**Why it matters.** Code that trusts `changes_so_far` as "already
+written" will hand out an id that no longer exists. The failed step name
+is useful; the structs in `changes_so_far` are not durable.
+
+**What to do.** Treat `changes_so_far` as diagnostic only. After
+`{:error, failed_op, failed_value, changes_so_far}`, re-query if you
+need to know what remains in the database.
+
+**Seen in:** [Salamanca Plaza Mayor multi](features/20-ecto-migrations-and-multis/10-salamanca-plaza-mayor-multi/).
+
+### SQLite rejects `ALTER TABLE ADD CONSTRAINT`
+
+**What happens.** `create constraint(:santiago_vault_tickets, :litres_positive, check: "litres > 0")`
+raises `ArgumentError` with
+`"SQLite3 does not support ALTER TABLE ADD CONSTRAINT."` Raw
+`ALTER TABLE … ADD CONSTRAINT … CHECK (…)` is refused the same way.
+A duplicate `vault_code` still fails only after `Repo.insert/1` hits the
+unique index.
+
+**Why it matters.** A migration that works on Postgres fails on this
+bottle's SQLite adapter at the constraint step. Putting CHECK in a
+separate `create constraint/3` after `create table` is not portable here.
+
+**What to do.** Embed `CHECK` inside `CREATE TABLE` (via `execute/2`),
+or enforce the rule in the changeset with `validate_number/3`. Keep
+`unique_index/3`; that path works on SQLite.
+
+**Seen in:** [Santiago Compostela vault](features/20-ecto-migrations-and-multis/04-santiago-compostela-vault/).
+
+### Unique constraint stays silent until `Repo.insert`
+
+**What happens.** The first `SCQ-900` insert succeeds. A second submit of
+the same vault code fails only when `Repo.insert/1` hits the unique
+index. `unique_constraint/3` does not add the error during a cast-only
+validate.
+
+**Why it matters.** Live validation can look clear while the migration's
+unique index is waiting for the write.
+
+**What to do.** Treat uniqueness as a write-time check. Show the
+constraint error from the failed insert.
+
+**Seen in:** [Santiago Compostela vault](features/20-ecto-migrations-and-multis/04-santiago-compostela-vault/).
